@@ -138,7 +138,7 @@ A production-ready, interactive HIPAA compliance training and self-assessment sy
 ```bash
 git clone https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0.git
 cd HIPAA-Training-System-for-Pharmacy-Staff-V2.0
-python hipaa_ai_pharmacy_production.py
+python hipaa_training_v2.py
 
 ```
 
@@ -187,13 +187,13 @@ PROGRESS_FILE = "hipaa_progress.json"
 
 ```bash
 # Run full test suite
-python test_hipaa_training.py
+python test_hipaa_training_v2.py
 
 # Run specific test class
-python -m unittest test_hipaa_training.TestScoreCalculation
+python -m unittest test_hipaa_training_v2.py.TestScoreCalculation
 
 # Run with verbose output
-python test_hipaa_training.py -v
+python test_hipaa_training_v2.py -v
 ```
 
 ### Test Coverage
@@ -215,14 +215,23 @@ See [TESTING.md](TESTING.md) for detailed manual testing procedures.
 
 ```
 hipaa-training-system/
-├── hipaa_ai_pharmacy_production.py  # Main application
-├── test_hipaa_training.py           # Automated test suite
-├── README.md                        # This file
-├── TESTING.md                       # Manual testing guide
-├── LICENSE                          # MIT License
-├── .gitignore                       # Git ignore rules
-├── requirements.txt                 # Python dependencies (empty - stdlib only)
-└── hipaa_progress.json              # Auto-generated progress file (gitignored)
+├── .github/
+│   └── workflows/
+│       └── tests.yml                    # CI/CD automation
+├── hipaa_training_v2.py                 # Main application
+├── test_hipaa_training_v2.py              # Test suite
+├── README.md                           # Main documentation
+├── TESTING.md                          # Testing guide
+├── CONTRIBUTING.md                     # Contribution guidelines
+├── DEPLOYMENT.md                       # Deployment guide
+├── QUICK_START.md                      # Quick start guide
+├── LICENSE                             # MIT License
+├── .gitignore                          # Git ignore rules
+├── requirements.txt                    # Python dependencies
+├── setup.sh                            # Linux/Mac setup script
+├── setup.bat                           # Windows setup script
+├── setup.py                          # Windows setup script
+└── hipaa_progress.json                 # User data (gitignored)
 ```
 
 ## 📊 Progress Tracking
@@ -372,8 +381,8 @@ applicable state laws.
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/saranoah/hipaa-training-system/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff/discussions)
+- **Issues**: [GitHub Issues](https://github.com/saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V2.0/discussions)
 - **Email**: israaali2019@yahoo.com
 
 ## 🔗 Resources
