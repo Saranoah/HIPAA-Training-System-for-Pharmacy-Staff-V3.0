@@ -1,0 +1,77 @@
+[
+  {
+    "text": "Privacy Rule training completed",
+    "category": "Training",
+    "validation_hint": "Verify completion certificate or training records"
+  },
+  {
+    "text": "Security Rule requirements reviewed",
+    "category": "Training",
+    "validation_hint": "Confirm understanding of administrative, physical, and technical safeguards"
+  },
+  {
+    "text": "Understand breach notification timeline (60 days)",
+    "category": "Knowledge",
+    "validation_hint": "Can explain when and how to report breaches"
+  },
+  {
+    "text": "Can identify unauthorized PHI access",
+    "category": "Knowledge",
+    "validation_hint": "Knows when to report security incidents"
+  },
+  {
+    "text": "Minimum necessary standard understood",
+    "category": "Knowledge",
+    "validation_hint": "Only access PHI needed for specific job duties"
+  },
+  {
+    "text": "All 18 PHI identifiers known",
+    "category": "Knowledge",
+    "validation_hint": "Can list and recognize the 18 HIPAA identifiers"
+  },
+  {
+    "text": "Patient rights (7 types) understood",
+    "category": "Knowledge",
+    "validation_hint": "Right to access, amend, accounting of disclosures, restrictions, etc."
+  },
+  {
+    "text": "ePHI encrypted at rest",
+    "category": "Technical",
+    "validation_hint": "Verify encryption settings on all devices storing ePHI"
+  },
+  {
+    "text": "ePHI encrypted in transit",
+    "category": "Technical",
+    "validation_hint": "Use secure email, VPN, and encrypted file transfer"
+  },
+  {
+    "text": "Audit logs enabled and reviewed",
+    "category": "Technical",
+    "validation_hint": "Check system access logs monthly for anomalies"
+  },
+  {
+    "text": "Cross-cut shredders available for PHI disposal",
+    "category": "Technical",
+    "validation_hint": "Physical document destruction equipment in place"
+  },
+  {
+    "text": "Unique user logins for all staff members",
+    "category": "Technical",
+    "validation_hint": "No shared passwords or generic accounts"
+  },
+  {
+    "text": "Annual staff HIPAA training completed",
+    "category": "Compliance",
+    "validation_hint": "Document and upload training certificates or attendance records"
+  },
+  {
+    "text": "Business Associate Agreements (BAAs) signed with all vendors",
+    "category": "Compliance",
+    "validation_hint": "Verify contracts with IT providers, billing companies, consultants"
+  },
+  {
+    "text": "Notice of Privacy Practices (NPP) provided to patients",
+    "category": "Compliance",
+    "validation_hint": "Confirm patient acknowledgment forms on file"
+  }
+]
