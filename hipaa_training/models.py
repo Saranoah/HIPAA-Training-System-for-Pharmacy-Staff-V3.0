@@ -38,8 +38,7 @@ class DatabaseManager:
         """Initialize SQLite database with necessary tables and indexes"""
         with self._get_connection() as conn:
             # Create tables
-            conn.execute(
-                '''
+            conn.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE NOT NULL,
@@ -47,11 +46,9 @@ class DatabaseManager:
                     role TEXT NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-                '''
-            )
+            ''')
 
-            conn.execute(
-                '''
+            conn.execute('''
                 CREATE TABLE IF NOT EXISTS training_progress (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
@@ -61,11 +58,9 @@ class DatabaseManager:
                     completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
                 )
-                '''
-            )
+            ''')
 
-            conn.execute(
-                '''
+            conn.execute('''
                 CREATE TABLE IF NOT EXISTS certificates (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
@@ -78,11 +73,9 @@ class DatabaseManager:
                     revoked_reason TEXT,
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
                 )
-                '''
-            )
+            ''')
 
-            conn.execute(
-                '''
+            conn.execute('''
                 CREATE TABLE IF NOT EXISTS audit_log (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
@@ -92,8 +85,7 @@ class DatabaseManager:
                     ip_address TEXT,
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
                 )
-                '''
-            )
+            ''')
 
             # Create indexes for performance
             conn.execute(
@@ -137,8 +129,8 @@ class DatabaseManager:
         """Save training progress with audit logging"""
         with self._get_connection() as conn:
             conn.execute(
-                "INSERT INTO training_progress (user_id, lesson_title, quiz_score, checklist_data, completed_at) "
-                "VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO training_progress (user_id, lesson_title, quiz_score, "
+                "checklist_data, completed_at) VALUES (?, ?, ?, ?, ?)",
                 (
                     user_id, lesson_title, score,
                     json.dumps(checklist_data) if checklist_data else None,
@@ -157,8 +149,8 @@ class DatabaseManager:
         encrypted_checklist = self.security.encrypt_data(json.dumps(checklist_data))
         with self._get_connection() as conn:
             conn.execute(
-                "INSERT INTO training_progress (user_id, quiz_score, checklist_data, completed_at) "
-                "VALUES (?, ?, ?, ?)",
+                "INSERT INTO training_progress (user_id, quiz_score, checklist_data, "
+                "completed_at) VALUES (?, ?, ?, ?)",
                 (user_id, score, encrypted_checklist, datetime.now())
             )
             self.security.log_action(
@@ -174,14 +166,15 @@ class DatabaseManager:
 
         with self._get_connection() as conn:
             conn.execute(
-                "INSERT INTO certificates (user_id, certificate_id, score, issue_date, expiry_date) "
-                "VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO certificates (user_id, certificate_id, score, issue_date, "
+                "expiry_date) VALUES (?, ?, ?, ?, ?)",
                 (user_id, certificate_id, score, issue_date, expiry_date)
             )
             self.security.log_action(
                 user_id,
                 "CERTIFICATE_ISSUED",
-                f"Certificate ID: {certificate_id}, Score: {score}%, Expires: {expiry_date.date()}"
+                f"Certificate ID: {certificate_id}, Score: {score}%, "
+                f"Expires: {expiry_date.date()}"
             )
         return certificate_id
 
@@ -194,14 +187,15 @@ class DatabaseManager:
         with self._get_connection() as conn:
             user_stats = conn.execute(
                 "SELECT COUNT(*) as total_users, AVG(quiz_score) as avg_score, "
-                "SUM(CASE WHEN quiz_score >= ? THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0) as pass_rate "
-                "FROM training_progress WHERE quiz_score IS NOT NULL",
+                "SUM(CASE WHEN quiz_score >= ? THEN 1 ELSE 0 END) * 100.0 / "
+                "NULLIF(COUNT(*), 0) as pass_rate FROM training_progress WHERE quiz_score IS NOT NULL",
                 (Config.PASS_THRESHOLD,)
             ).fetchone()
 
             cert_stats = conn.execute(
                 "SELECT COUNT(*) as total_certs, "
-                "SUM(CASE WHEN expiry_date > ? AND revoked = FALSE THEN 1 ELSE 0 END) as active_certs, "
+                "SUM(CASE WHEN expiry_date > ? AND revoked = FALSE THEN 1 ELSE 0 END) "
+                "as active_certs, "
                 "SUM(CASE WHEN expiry_date <= ? THEN 1 ELSE 0 END) as expired_certs "
                 "FROM certificates",
                 (datetime.now(), datetime.now())
@@ -309,7 +303,9 @@ class ComplianceDashboard:
 
         stats = self.db.get_compliance_stats()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"reports/compliance_dashboard_{timestamp}.{format_type}"
+        filename = (
+            f"reports/compliance_dashboard_{timestamp}.{format_type}"
+        )
 
         os.makedirs("reports", exist_ok=True)
 
