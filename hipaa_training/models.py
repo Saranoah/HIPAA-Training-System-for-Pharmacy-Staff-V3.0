@@ -16,6 +16,7 @@ class Config:
     AUDIT_RETENTION_YEARS = int(os.getenv('AUDIT_RETENTION_YEARS', '6'))
     MINI_QUIZ_THRESHOLD = int(os.getenv('MINI_QUIZ_THRESHOLD', '70'))
 
+    # CRITICAL: Fail fast if encryption key not set
     ENCRYPTION_KEY = os.getenv('HIPAA_ENCRYPTION_KEY')
     if not ENCRYPTION_KEY:
         raise ValueError(
@@ -36,6 +37,7 @@ class DatabaseManager:
     def _initialize_database(self):
         """Initialize SQLite database with necessary tables and indexes"""
         with self._get_connection() as conn:
+            # Create tables
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,6 +47,7 @@ class DatabaseManager:
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             ''')
+
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS training_progress (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,6 +59,7 @@ class DatabaseManager:
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
                 )
             ''')
+
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS certificates (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,6 +74,7 @@ class DatabaseManager:
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
                 )
             ''')
+
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS audit_log (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,6 +86,8 @@ class DatabaseManager:
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
                 )
             ''')
+
+            # Create indexes for performance
             conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_user_id ON training_progress(user_id)"
             )
@@ -101,6 +108,8 @@ class DatabaseManager:
     def _get_connection(self):
         """
         Get database connection as context manager with proper error handling
+
+        FIXED: Added @contextmanager decorator to make this work correctly
         """
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
@@ -154,6 +163,7 @@ class DatabaseManager:
         certificate_id = str(uuid.uuid4())
         issue_date = datetime.now()
         expiry_date = issue_date + timedelta(days=Config.TRAINING_EXPIRY_DAYS)
+
         with self._get_connection() as conn:
             conn.execute(
                 "INSERT INTO certificates (user_id, certificate_id, score, issue_date, "
@@ -171,6 +181,8 @@ class DatabaseManager:
     def get_compliance_stats(self) -> Dict:
         """
         Retrieve compliance statistics for reporting
+
+        FIXED: Added proper handling for empty database
         """
         with self._get_connection() as conn:
             user_stats = conn.execute(
@@ -179,6 +191,7 @@ class DatabaseManager:
                 "NULLIF(COUNT(*), 0) as pass_rate FROM training_progress WHERE quiz_score IS NOT NULL",
                 (Config.PASS_THRESHOLD,)
             ).fetchone()
+
             cert_stats = conn.execute(
                 "SELECT COUNT(*) as total_certs, "
                 "SUM(CASE WHEN expiry_date > ? AND revoked = FALSE THEN 1 ELSE 0 END) "
@@ -187,6 +200,8 @@ class DatabaseManager:
                 "FROM certificates",
                 (datetime.now(), datetime.now())
             ).fetchone()
+
+        # Handle empty database case
         total_users = user_stats["total_users"] or 0
         if total_users == 0:
             return {
@@ -197,6 +212,7 @@ class DatabaseManager:
                 "active_certs": 0,
                 "expired_certs": 0
             }
+
         return {
             "total_users": total_users,
             "avg_score": round(user_stats["avg_score"] or 0, 2),
@@ -217,6 +233,9 @@ class UserManager:
     def _sanitize_input(self, input_str: str, max_length: int) -> str:
         """
         Sanitize user input to prevent XSS/script injection
+
+        IMPROVED: Uses HTML escaping instead of removing all special chars
+        This preserves legitimate names like O'Brien, José, etc.
         """
         import html
         sanitized = html.escape(input_str.strip())
@@ -226,10 +245,13 @@ class UserManager:
         """Create a new user with role-based access control"""
         username = self._sanitize_input(username, 50)
         full_name = self._sanitize_input(full_name, 100)
+
         if role not in ['admin', 'staff', 'auditor']:
             raise ValueError("Invalid role. Use 'admin', 'staff', or 'auditor'.")
+
         if not username or not full_name:
             raise ValueError("Username and full name cannot be empty.")
+
         with self.db._get_connection() as conn:
             try:
                 cursor = conn.execute(
@@ -273,13 +295,21 @@ class ComplianceDashboard:
     def generate_enterprise_report(self, format_type: str) -> str:
         """
         Generate compliance report in CSV or JSON format
+
+        FIXED: Line 191 - broke the long filename assignment
         """
         if format_type not in ['csv', 'json']:
             raise ValueError("Invalid format. Use 'csv' or 'json'.")
+
         stats = self.db.get_compliance_stats()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"reports/compliance_dashboard_{timestamp}.{format_type}"
+        
+        # FIXED: Broke the long line by using a variable
+        base_name = f"compliance_dashboard_{timestamp}"
+        filename = f"reports/{base_name}.{format_type}"
+
         os.makedirs("reports", exist_ok=True)
+
         if format_type == "csv":
             import csv
             with open(filename, 'w', newline='', encoding='utf-8') as f:
@@ -289,4 +319,5 @@ class ComplianceDashboard:
         else:  # json
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(stats, f, indent=2, ensure_ascii=False)
+
         return filename
