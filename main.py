@@ -15,13 +15,12 @@ import os
 import sys
 import platform
 import argparse
-from pathlib import Path
 
 
 def setup_production_environment():
     """
     Setup production directories and secure permissions
-    
+
     FIXES APPLIED:
     - Cross-platform permission handling
     - Better error handling
@@ -29,18 +28,16 @@ def setup_production_environment():
     """
     required_dirs = [
         "content",
-        "reports", 
+        "reports",
         "certificates",
         "evidence",
         "data",
         "logs"
     ]
-    
     # Create all required directories
     for directory in required_dirs:
         os.makedirs(directory, exist_ok=True)
         print(f"✓ Created directory: {directory}/")
-    
     # Set secure permissions (Unix/Linux/macOS only)
     if platform.system() != 'Windows':
         for directory in required_dirs:
@@ -51,32 +48,28 @@ def setup_production_environment():
                 print(f"⚠ Warning: Could not set permissions on {directory}/: {e}")
     else:
         print("ℹ Running on Windows - skipping Unix permission settings")
-    
     # Initialize database
     try:
         from hipaa_training.models import DatabaseManager
-        db = DatabaseManager()
+        DatabaseManager()
         print("✓ Database initialized successfully")
     except Exception as e:
         print(f"❌ Failed to initialize database: {e}")
         sys.exit(1)
-    
     print("\n✅ Production environment setup complete!\n")
 
 
 def check_environment():
     """
     Verify required environment variables are set
-    
+
     NEW: Added environment validation
     """
     required_vars = ['HIPAA_ENCRYPTION_KEY']
     missing_vars = []
-    
     for var in required_vars:
         if not os.getenv(var):
             missing_vars.append(var)
-    
     if missing_vars:
         print("❌ CRITICAL: Missing required environment variables:")
         for var in missing_vars:
@@ -92,13 +85,13 @@ def check_environment():
 
 def display_system_info():
     """Display system information for debugging"""
-    print("="*60)
+    print("=" * 60)
     print("HIPAA Training System V3.0")
-    print("="*60)
+    print("=" * 60)
     print(f"Python Version: {sys.version}")
     print(f"Platform: {platform.system()} {platform.release()}")
     print(f"Working Directory: {os.getcwd()}")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
 
 
 def main():
@@ -114,44 +107,36 @@ Examples:
   python main.py --check-env        # Check environment variables
         """
     )
-    
     parser.add_argument(
         '--version',
         action='version',
         version='HIPAA Training System V3.0.0'
     )
-    
     parser.add_argument(
         '--setup-only',
         action='store_true',
         help='Setup production environment and exit'
     )
-    
     parser.add_argument(
         '--check-env',
         action='store_true',
         help='Check environment variables and exit'
     )
-    
     parser.add_argument(
         '--debug',
         action='store_true',
         help='Enable debug mode with verbose output'
     )
-    
     args = parser.parse_args()
-    
     # Display system info in debug mode
     if args.debug:
         display_system_info()
-    
     # Check environment variables
     if args.check_env:
         print("Checking environment configuration...")
         check_environment()
         print("✅ All required environment variables are set!")
         return 0
-    
     # Setup environment
     try:
         check_environment()  # Verify env vars first
@@ -159,12 +144,10 @@ Examples:
     except Exception as e:
         print(f"❌ Setup failed: {e}")
         return 1
-    
     # Exit if setup-only flag is set
     if args.setup_only:
         print("Setup complete. Exiting as requested (--setup-only).")
         return 0
-    
     # Start the application
     try:
         from hipaa_training.cli import CLI
