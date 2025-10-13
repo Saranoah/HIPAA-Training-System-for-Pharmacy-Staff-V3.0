@@ -24,14 +24,14 @@ class Config:
 class SecurityManager:
     """
     Manages encryption, audit logging, and security operations
-    
+
     FIXES APPLIED:
     - Added missing sqlite3 import
     - Fixed salt encoding bug
     - Added log rotation
     - Improved error handling
     """
-    
+
     def __init__(self):
         self.setup_logging()
         self._setup_encryption()
@@ -39,11 +39,10 @@ class SecurityManager:
     def setup_logging(self):
         """
         Configure rotating logs for HIPAA-compliant audit trail
-        
+
         FIXED: Added log rotation and proper directory handling
         """
         os.makedirs('logs', exist_ok=True)
-        
         # Create rotating file handler (10MB per file, keep 5 backups)
         handler = RotatingFileHandler(
             'logs/hipaa_audit.log',
@@ -51,28 +50,24 @@ class SecurityManager:
             backupCount=5,
             encoding='utf-8'
         )
-        
         formatter = logging.Formatter(
             '%(asctime)s - %(levelname)s - USER_%(user_id)s - %(action)s - %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         handler.setFormatter(formatter)
-        
         self.logger = logging.getLogger('HIPAA_Audit')
         self.logger.setLevel(logging.INFO)
         self.logger.addHandler(handler)
-        
         # Prevent propagation to root logger
         self.logger.propagate = False
 
     def _setup_encryption(self):
         """
         Setup Fernet encryption with PBKDF2 key derivation
-        
+
         FIXED: Salt encoding bug - handles both string and bytes properly
         """
         encryption_key = Config.ENCRYPTION_KEY.encode()
-        
         # Get or generate salt
         salt_env = os.getenv('HIPAA_SALT')
         if salt_env:
@@ -92,7 +87,6 @@ class SecurityManager:
                 "This will cause decryption failures on restart!",
                 extra={'user_id': 0, 'action': 'SYSTEM_WARNING'}
             )
-        
         # Derive key using PBKDF2
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
@@ -106,10 +100,10 @@ class SecurityManager:
     def encrypt_data(self, data: str) -> str:
         """
         Encrypt sensitive data using Fernet symmetric encryption
-        
+
         Args:
             data: Plain text data to encrypt
-            
+
         Returns:
             Base64-encoded encrypted data
         """
@@ -127,10 +121,10 @@ class SecurityManager:
     def decrypt_data(self, encrypted_data: str) -> str:
         """
         Decrypt sensitive data
-        
+
         Args:
             encrypted_data: Base64-encoded encrypted data
-            
+
         Returns:
             Plain text data
         """
@@ -148,13 +142,12 @@ class SecurityManager:
     def log_action(self, user_id: int, action: str, details: str) -> None:
         """
         Log an action to both file and database for HIPAA audit trail
-        
+
         FIXED: Added missing sqlite3 import (now at top of file)
         IMPROVED: Added try-except for database logging failures
         """
         # Log to file
         self.logger.info(details, extra={'user_id': user_id, 'action': action})
-        
         # Log to database
         try:
             ip_address = self._get_client_ip()
@@ -175,7 +168,7 @@ class SecurityManager:
     def _get_client_ip(self) -> str:
         """
         Get client IP address for audit logging
-        
+
         IMPROVED: Returns meaningful value for CLI, placeholder for future web version
         """
         # For CLI application, return localhost
@@ -185,11 +178,10 @@ class SecurityManager:
     def encrypt_file(self, input_path: str, output_path: str) -> None:
         """
         Encrypt a file in chunks to handle large files efficiently
-        
+
         NEW: Added for evidence file encryption with memory efficiency
         """
         CHUNK_SIZE = 64 * 1024  # 64KB chunks
-        
         try:
             with open(input_path, 'rb') as f_in, open(output_path, 'wb') as f_out:
                 while chunk := f_in.read(CHUNK_SIZE):
@@ -207,7 +199,7 @@ class SecurityManager:
     def decrypt_file(self, input_path: str, output_path: str) -> None:
         """
         Decrypt a file that was encrypted in chunks
-        
+
         NEW: Added for evidence file decryption
         """
         try:
@@ -218,7 +210,6 @@ class SecurityManager:
                     if not size_bytes:
                         break
                     chunk_size = int.from_bytes(size_bytes, 'big')
-                    
                     # Read and decrypt chunk
                     encrypted_chunk = f_in.read(chunk_size)
                     decrypted_chunk = self.cipher.decrypt(encrypted_chunk)
