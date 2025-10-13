@@ -15,7 +15,6 @@ import os
 import sys
 import platform
 import argparse
-from pathlib import Path
 
 
 def setup_production_environment():
@@ -55,7 +54,7 @@ def setup_production_environment():
     # Initialize database
     try:
         from hipaa_training.models import DatabaseManager
-        db = DatabaseManager()
+        DatabaseManager()
         print("✓ Database initialized successfully")
     except Exception as e:
         print(f"❌ Failed to initialize database: {e}")
