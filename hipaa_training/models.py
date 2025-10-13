@@ -19,10 +19,10 @@ class DatabaseManager:
     def _init_db(self):
         """Initialize database tables if they don't exist"""
         os.makedirs("data", exist_ok=True)
-
         with self._get_connection() as conn:
             # Users table
-            conn.execute('''
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE NOT NULL,
@@ -30,10 +30,11 @@ class DatabaseManager:
                     role TEXT NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            ''')
-
+                """
+            )
             # Training progress table
-            conn.execute('''
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS training_progress (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
@@ -43,10 +44,11 @@ class DatabaseManager:
                     completed_at TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES users (id)
                 )
-            ''')
-
+                """
+            )
             # Audit log table (HIPAA Requirement)
-            conn.execute('''
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS audit_log (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
@@ -56,10 +58,11 @@ class DatabaseManager:
                     ip_address TEXT,
                     FOREIGN KEY (user_id) REFERENCES users (id)
                 )
-            ''')
-
+                """
+            )
             # Certificates table
-            conn.execute('''
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS certificates (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
@@ -70,15 +73,14 @@ class DatabaseManager:
                     revoked BOOLEAN DEFAULT FALSE,
                     FOREIGN KEY (user_id) REFERENCES users (id)
                 )
-            ''')
+                """
+            )
 
     @contextmanager
     def _get_connection(self):
         """Database connection context manager"""
         if DatabaseManager.connection is None:
-            DatabaseManager.connection = sqlite3.connect(
-                self.db_path
-            )
+            DatabaseManager.connection = sqlite3.connect(self.db_path)
             DatabaseManager.connection.row_factory = sqlite3.Row
 
         conn = DatabaseManager.connection
@@ -86,6 +88,5 @@ class DatabaseManager:
             yield conn
             conn.commit()
         except Exception:
-            if conn:
-                conn.rollback()
+            conn.rollback()
             raise
