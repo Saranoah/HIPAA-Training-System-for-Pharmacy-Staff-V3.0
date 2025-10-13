@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from rich.console import Console
 from rich.panel import Panel
