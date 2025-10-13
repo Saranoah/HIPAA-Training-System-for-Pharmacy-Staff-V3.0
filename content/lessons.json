@@ -385,3 +385,112 @@
   },
   "Patient Request Procedures": {
     "content": "Patients have specific rights under HIPAA to make requests regarding their health information. Covered entities must have procedures in place to handle these requests.\n\n1. REQUEST FOR ACCESS (RIGHT TO VIEW/OBTAIN RECORDS):\n\nTimeline:\n- 30 days to provide access or denial\n- One 30-day extension allowed if unable to act within initial 30 days\n\nRequirements:\n- Can request electronic or paper format\n- If requested in electronic format, must provide in that format if readily producible\n- Can charge reasonable, cost-based fee (labor for copying, supplies, postage)\n- Cannot charge for search, retrieval, or review\n\nReasons for denial:\n- Psychotherapy notes\n- Information compiled for legal proceedings\n- Information subject to Clinical Laboratory Improvements Amendments (CLIA)\n- When access would endanger patient or another person (reviewable denial)\n- Correctional institutions (in certain circumstances)\n\n2. REQUEST TO AMEND RECORDS:\n\nTimeline:\n- 60 days to accept or deny\n- One 30-day extension allowed\n\nRequirements:\n- Patient must identify record and reason for amendment\n- If accepted, must make amendment and inform relevant parties\n- If denied, patient can submit statement of disagreement\
+- Must document all amendments and statements
+
+Reasons for denial:
+- Record not created by covered entity
+- Record not part of designated record set
+- Record not available for inspection
+- Record is accurate and complete
+
+3. REQUEST FOR ACCOUNTING OF DISCLOSURES:
+
+Timeline:
+- 60 days to provide accounting
+- One 30-day extension allowed
+
+Requirements:
+- Must provide accounting for 6 years prior to request (or from April 14, 2003, whichever is later)
+- Must include: date, recipient, description of information, purpose
+- First accounting in 12-month period is free
+- Can charge reasonable fee for subsequent requests
+
+Disclosures NOT included in accounting:
+- Treatment, payment, healthcare operations
+- To the individual or their personal representative
+- Pursuant to authorization
+- For facility directory or to persons involved in care
+- For national security or intelligence
+- To correctional institutions
+- Incident to permitted use/disclosure
+
+4. REQUEST FOR RESTRICTIONS:
+
+Timeline:
+- No specific timeline required
+- Should respond promptly
+
+Requirements:
+- Must agree to restrict disclosures to health plan if:
+  * Services paid for out-of-pocket in full
+  * Disclosure not required by law
+- For other restrictions, entity can agree or deny
+- If agreed, must be in writing and followed
+- Can terminate restriction with notice (not retroactive)
+
+5. REQUEST FOR CONFIDENTIAL COMMUNICATIONS:
+
+Timeline:
+- Must accommodate reasonable requests
+- No specific timeline but should be prompt
+
+Requirements:
+- Must honor if patient states information could endanger them
+- Must accommodate if request is reasonable
+- Can ask how payment will be handled
+- Cannot require explanation if request is reasonable
+
+PROCEDURAL REQUIREMENTS:
+
+✓ Have written policies and procedures
+✓ Train staff on handling requests
+✓ Document all requests and responses
+✓ Maintain forms for each request type
+✓ Track timelines and extensions
+✓ Have process for appeals/complaints
+✓ Designate responsible individual(s)
+✓ Provide clear instructions to patients
+✓ Maintain records for 6 years
+
+BEST PRACTICES:
+
+- Provide request forms to patients
+- Post information about rights in facility
+- Include in Notice of Privacy Practices
+- Have standard response templates
+- Track requests in compliance database
+- Regular staff training on procedures
+- Audit compliance with timelines
+- Document reasons for any denials
+- Ensure consistent application of policies",
+    "key_points": [
+      "Patients can request access to records within 30 days",
+      "Amendments must be responded to within 60 days",
+      "Accounting of disclosures covers 6 years of history",
+      "Must honor requests for confidential communications if reasonable",
+      "First accounting request in 12 months must be free"
+    ],
+    "comprehension_questions": [
+      {
+        "question": "How long does a covered entity have to provide access to medical records?",
+        "options": [
+          "15 days",
+          "30 days",
+          "60 days",
+          "90 days"
+        ],
+        "correct_index": 1
+      },
+      {
+        "question": "Must a covered entity agree to all requests for restrictions?",
+        "options": [
+          "Yes, all requests must be honored",
+          "No, but must agree if service paid out-of-pocket in full",
+          "Only if approved by supervisor",
+          "Never - restrictions are optional"
+        ],
+        "correct_index": 1
+      }
+    ]
+  }
+}
