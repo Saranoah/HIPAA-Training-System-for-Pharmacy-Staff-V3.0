@@ -296,7 +296,7 @@ class ComplianceDashboard:
         """
         Generate compliance report in CSV or JSON format
 
-        FIXED: Line 191 - broke the long filename assignment
+        FIXED: Line 191 - properly broke the long line using os.path.join
         """
         if format_type not in ['csv', 'json']:
             raise ValueError("Invalid format. Use 'csv' or 'json'.")
@@ -304,9 +304,9 @@ class ComplianceDashboard:
         stats = self.db.get_compliance_stats()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
-        # FIXED: Broke the long line by using a variable
-        base_name = f"compliance_dashboard_{timestamp}"
-        filename = f"reports/{base_name}.{format_type}"
+        # FIXED: Properly broke the long line using os.path.join
+        base_name = f"compliance_dashboard_{timestamp}.{format_type}"
+        filename = os.path.join("reports", base_name)
 
         os.makedirs("reports", exist_ok=True)
 
