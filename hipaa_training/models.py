@@ -146,7 +146,8 @@ class DatabaseManager:
         score: Optional[float]
     ) -> None:
         """Save progress with encrypted sensitive data"""
-        encrypted_checklist = self.security.encrypt_data(json.dumps(checklist_data))
+        encrypted_checklist = self.security.encrypt_data(
+            json.dumps(checklist_data))
         with self._get_connection() as conn:
             conn.execute(
                 "INSERT INTO training_progress (user_id, quiz_score, checklist_data, "
@@ -247,7 +248,8 @@ class UserManager:
         full_name = self._sanitize_input(full_name, 100)
 
         if role not in ['admin', 'staff', 'auditor']:
-            raise ValueError("Invalid role. Use 'admin', 'staff', or 'auditor'.")
+            raise ValueError(
+                "Invalid role. Use 'admin', 'staff', or 'auditor'.")
 
         if not username or not full_name:
             raise ValueError("Username and full name cannot be empty.")
@@ -303,7 +305,7 @@ class ComplianceDashboard:
 
         stats = self.db.get_compliance_stats()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        
+
         # FIXED: Properly broke the long line using os.path.join
         base_name = f"compliance_dashboard_{timestamp}.{format_type}"
         filename = os.path.join("reports", base_name)
