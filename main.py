@@ -16,7 +16,6 @@ import sys
 import platform
 import argparse
 
-
 def setup_production_environment():
     """
     Setup production directories and secure permissions
@@ -58,7 +57,6 @@ def setup_production_environment():
         sys.exit(1)
     print("\n✅ Production environment setup complete!\n")
 
-
 def check_environment():
     """
     Verify required environment variables are set
@@ -82,7 +80,6 @@ def check_environment():
         print("   set HIPAA_ENCRYPTION_KEY=<your-generated-key>")
         sys.exit(1)
 
-
 def display_system_info():
     """Display system information for debugging"""
     print("=" * 60)
@@ -92,7 +89,6 @@ def display_system_info():
     print(f"Platform: {platform.system()} {platform.release()}")
     print(f"Working Directory: {os.getcwd()}")
     print("=" * 60 + "\n")
-
 
 def main():
     """Main entry point with CLI argument parsing"""
@@ -163,6 +159,9 @@ Examples:
             import traceback
             traceback.print_exc()
         return 1
+
+if __name__ == "__main__":
+    sys.exit(main())
 
 
 if __name__ == "__main__":
