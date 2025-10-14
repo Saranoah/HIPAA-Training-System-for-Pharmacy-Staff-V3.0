@@ -209,8 +209,13 @@ class EnhancedTrainingEngine:
                         break
                     self.console.print("[red]Please enter 'yes' or 'no'.[/red]")
 
-                evidence_file = input("Provide evidence file (optional, press Enter to skip): ").strip()
-                self.checklist[question] = (response == "yes")
+             evidence_file = input(
+    "Provide evidence file (optional, press Enter to skip): "
+).strip()
+
+self.checklist[question] = (
+    response.lower().strip() == "yes"
+)
 
                 if evidence_file:
                     evidence_dir = os.path.join("evidence")
