@@ -15,7 +15,7 @@ import random
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress
-from typing import Dict, List
+from typing import Dict, Optional
 
 from hipaa_training.content_manager import ContentManager
 from hipaa_training.models import DatabaseManager
