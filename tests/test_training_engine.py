@@ -82,13 +82,13 @@ def test_adaptive_quiz_scoring(training_engine):
         }
         for i in range(10)
     ]
-    
+
     training_engine.content.quiz_questions = mock_questions
-    
+
     # Mock user getting 8 correct answers (answer '1' which is index 0)
     # and 2 incorrect (answer '2' which is index 1)
     user_answers = ['1'] * 8 + ['2'] * 2
-    
+
     with patch('builtins.input', side_effect=user_answers):
         score = training_engine.adaptive_quiz(1)
         assert score == 80.0
@@ -105,9 +105,9 @@ def test_adaptive_quiz_perfect_score(training_engine):
         }
         for i in range(5)
     ]
-    
+
     training_engine.content.quiz_questions = mock_questions
-    
+
     # Answer all correctly
     with patch('builtins.input', side_effect=['1'] * 5):
         score = training_engine.adaptive_quiz(1)
@@ -117,10 +117,10 @@ def test_adaptive_quiz_perfect_score(training_engine):
 def test_display_lesson(training_engine, sample_lesson):
     """Test lesson display function"""
     training_engine.content.lessons = {"Test Lesson": sample_lesson}
-    
+
     with patch('builtins.input', return_value=''):  # Mock Enter key
         training_engine.display_lesson(1, "Test Lesson")
-        
+
         # Verify security logging was called
         training_engine.security.log_action.assert_called_once()
 
@@ -128,9 +128,9 @@ def test_display_lesson(training_engine, sample_lesson):
 def test_display_lesson_not_found(training_engine):
     """Test displaying non-existent lesson"""
     training_engine.content.lessons = {}
-    
+
     training_engine.display_lesson(1, "Non Existent Lesson")
-    
+
     # Should print error message (via console mock)
     training_engine.console.print.assert_called()
 
@@ -149,11 +149,11 @@ def test_complete_enhanced_checklist(training_engine):
             "validation_hint": "Check documentation"
         }
     ]
-    
+
     # Mock user answering yes to both items, no evidence files
     with patch('builtins.input', side_effect=['yes', '', 'yes', '']):
         training_engine.complete_enhanced_checklist(1)
-        
+
         # Check that checklist was populated
         assert len(training_engine.checklist) == 2
         assert training_engine.checklist["Test item 1"] is True
@@ -166,10 +166,10 @@ def test_checklist_with_mixed_responses(training_engine):
         {"text": "Item 1", "category": "Test", "validation_hint": ""},
         {"text": "Item 2", "category": "Test", "validation_hint": ""}
     ]
-    
+
     # User answers yes to first, no to second
     with patch('builtins.input', side_effect=['yes', 'no']):
         training_engine.complete_enhanced_checklist(1)
-        
+
         assert training_engine.checklist["Item 1"] is True
         assert training_engine.checklist["Item 2"] is False

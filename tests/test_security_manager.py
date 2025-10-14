@@ -21,10 +21,10 @@ def security_manager():
 def test_encrypt_decrypt_round_trip(security_manager):
     """Test that encryption and decryption work correctly"""
     original_data = "Sensitive HIPAA compliance data"
-    
+
     encrypted = security_manager.encrypt_data(original_data)
     decrypted = security_manager.decrypt_data(encrypted)
-    
+
     assert decrypted == original_data
     assert encrypted != original_data
     assert isinstance(encrypted, str)
@@ -53,9 +53,9 @@ def test_log_action(security_manager):
     with patch('sqlite3.connect') as mock_connect:
         mock_conn = MagicMock()
         mock_connect.return_value.__enter__.return_value = mock_conn
-        
+
         security_manager.log_action(123, "TEST_ACTION", "Test details for audit")
-        
+
         # Verify database insert was called
         mock_conn.execute.assert_called_once()
         call_args = mock_conn.execute.call_args[0]
@@ -84,12 +84,12 @@ def test_encrypt_file(security_manager, tmp_path):
     # Create a temporary test file
     test_file = tmp_path / "test_input.txt"
     test_file.write_text("Test content for file encryption")
-    
+
     output_file = tmp_path / "test_output.enc"
-    
+
     # Encrypt the file
     security_manager.encrypt_file(str(test_file), str(output_file))
-    
+
     # Verify output file exists and is not empty
     assert output_file.exists()
     assert output_file.stat().st_size > 0
@@ -101,14 +101,14 @@ def test_decrypt_file(security_manager, tmp_path):
     original_content = "Secret HIPAA data for testing"
     test_file = tmp_path / "original.txt"
     test_file.write_text(original_content)
-    
+
     encrypted_file = tmp_path / "encrypted.enc"
     decrypted_file = tmp_path / "decrypted.txt"
-    
+
     # Encrypt then decrypt
     security_manager.encrypt_file(str(test_file), str(encrypted_file))
     security_manager.decrypt_file(str(encrypted_file), str(decrypted_file))
-    
+
     # Verify content matches
     assert decrypted_file.read_text() == original_content
 
@@ -118,7 +118,7 @@ def test_get_client_ip(security_manager):
     with patch.dict('os.environ', {'CLIENT_IP': '192.168.1.100'}):
         ip = security_manager._get_client_ip()
         assert ip == '192.168.1.100'
-    
+
     # Test default
     with patch.dict('os.environ', {}, clear=True):
         ip = security_manager._get_client_ip()

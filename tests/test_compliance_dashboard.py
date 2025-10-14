@@ -35,15 +35,15 @@ def mock_stats():
 def test_generate_enterprise_report_csv(dashboard, mock_stats, tmp_path):
     """Test CSV report generation"""
     dashboard.db.get_compliance_stats.return_value = mock_stats
-    
+
     # Change to temp directory for testing
     with patch('os.makedirs'):
         with patch('builtins.open', mock_open()) as mock_file:
             filename = dashboard.generate_enterprise_report('csv')
-            
+
             assert filename.startswith('reports/compliance_dashboard_')
             assert filename.endswith('.csv')
-            
+
             # Verify file was opened for writing
             mock_file.assert_called_once()
 
@@ -51,14 +51,14 @@ def test_generate_enterprise_report_csv(dashboard, mock_stats, tmp_path):
 def test_generate_enterprise_report_json(dashboard, mock_stats, tmp_path):
     """Test JSON report generation"""
     dashboard.db.get_compliance_stats.return_value = mock_stats
-    
+
     with patch('os.makedirs'):
         with patch('builtins.open', mock_open()) as mock_file:
             filename = dashboard.generate_enterprise_report('json')
-            
+
             assert filename.startswith('reports/compliance_dashboard_')
             assert filename.endswith('.json')
-            
+
             # Verify JSON dump was called
             mock_file.assert_called_once()
 
@@ -72,11 +72,11 @@ def test_generate_report_invalid_format(dashboard):
 def test_generate_report_creates_directory(dashboard, mock_stats):
     """Test that reports directory is created"""
     dashboard.db.get_compliance_stats.return_value = mock_stats
-    
+
     with patch('os.makedirs') as mock_makedirs:
         with patch('builtins.open', mock_open()):
             dashboard.generate_enterprise_report('json')
-            
+
             # Verify directory creation
             mock_makedirs.assert_called_once_with('reports', exist_ok=True)
 
@@ -93,9 +93,9 @@ def test_compliance_stats_integration(dashboard):
         'expired_certs': 5
     }
     dashboard.db.get_compliance_stats.return_value = mock_stats
-    
+
     stats = dashboard.db.get_compliance_stats()
-    
+
     assert stats['total_users'] == 100
     assert stats['avg_score'] == 88.5
     assert stats['pass_rate'] == 92.0

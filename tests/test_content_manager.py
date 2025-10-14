@@ -11,7 +11,7 @@ def content_manager(tmp_path):
     """Create content manager with temporary directory"""
     content_dir = tmp_path / "content"
     content_dir.mkdir()
-    
+
     # Create sample content files
     lessons = {
         "Test Lesson": {
@@ -20,7 +20,7 @@ def content_manager(tmp_path):
             "comprehension_questions": []
         }
     }
-    
+
     quiz_questions = [
         {
             "question": "Test question?",
@@ -29,7 +29,7 @@ def content_manager(tmp_path):
             "explanation": "Test explanation"
         }
     ]
-    
+
     checklist_items = [
         {
             "text": "Test item",
@@ -37,12 +37,12 @@ def content_manager(tmp_path):
             "validation_hint": "Test hint"
         }
     ]
-    
+
     # Write files
     (content_dir / "lessons.json").write_text(json.dumps(lessons))
     (content_dir / "quiz_questions.json").write_text(json.dumps(quiz_questions))
     (content_dir / "checklist_items.json").write_text(json.dumps(checklist_items))
-    
+
     return ContentManager(str(content_dir))
 
 
@@ -78,7 +78,7 @@ def test_get_lesson(content_manager):
     """Test getting a specific lesson"""
     lesson = content_manager.get_lesson("Test Lesson")
     assert lesson["content"] == "Test content"
-    
+
     # Test non-existent lesson
     empty = content_manager.get_lesson("Non Existent")
     assert empty == {}
@@ -107,14 +107,14 @@ def test_create_default_content_on_missing_file(tmp_path):
     """Test that default content is created when files are missing"""
     empty_dir = tmp_path / "empty_content"
     empty_dir.mkdir()
-    
+
     cm = ContentManager(str(empty_dir))
-    
+
     # Should have default content
     assert len(cm.lessons) > 0
     assert len(cm.quiz_questions) > 0
     assert len(cm.checklist_items) > 0
-    
+
     # Files should be created
     assert (empty_dir / "lessons.json").exists()
     assert (empty_dir / "quiz_questions.json").exists()
@@ -125,7 +125,7 @@ def test_validation_invalid_lesson_structure(tmp_path):
     """Test validation catches invalid lesson structure"""
     bad_content_dir = tmp_path / "bad_content"
     bad_content_dir.mkdir()
-    
+
     # Create invalid lessons file (missing required keys)
     bad_lessons = {
         "Bad Lesson": {
@@ -136,7 +136,7 @@ def test_validation_invalid_lesson_structure(tmp_path):
     (bad_content_dir / "lessons.json").write_text(json.dumps(bad_lessons))
     (bad_content_dir / "quiz_questions.json").write_text(json.dumps([]))
     (bad_content_dir / "checklist_items.json").write_text(json.dumps([]))
-    
+
     with pytest.raises(ValueError, match="missing required key"):
         ContentManager(str(bad_content_dir))
 
@@ -145,12 +145,12 @@ def test_validation_invalid_quiz_structure(tmp_path):
     """Test validation catches invalid quiz structure"""
     bad_content_dir = tmp_path / "bad_quiz"
     bad_content_dir.mkdir()
-    
+
     # Valid lessons
     (bad_content_dir / "lessons.json").write_text(json.dumps({
         "Test": {"content": "test", "key_points": []}
     }))
-    
+
     # Invalid quiz (missing explanation)
     bad_quiz = [{
         "question": "Q?",
@@ -160,6 +160,6 @@ def test_validation_invalid_quiz_structure(tmp_path):
     }]
     (bad_content_dir / "quiz_questions.json").write_text(json.dumps(bad_quiz))
     (bad_content_dir / "checklist_items.json").write_text(json.dumps([]))
-    
+
     with pytest.raises(ValueError, match="missing required key"):
         ContentManager(str(bad_content_dir))

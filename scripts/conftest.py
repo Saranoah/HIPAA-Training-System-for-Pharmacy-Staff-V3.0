@@ -23,9 +23,9 @@ def test_env():
     test_dirs = ['test_content', 'test_reports', 'test_evidence']
     for d in test_dirs:
         Path(d).mkdir(exist_ok=True)
-    
+
     yield
-    
+
     # Cleanup
     import shutil
     for d in test_dirs:

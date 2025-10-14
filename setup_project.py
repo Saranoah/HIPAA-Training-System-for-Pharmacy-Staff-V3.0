@@ -23,7 +23,7 @@ def create_project_structure():
         'certificates',
         'evidence'
     ]
-    
+
     for directory in directories:
         Path(directory).mkdir(parents=True, exist_ok=True)
         print(f"✅ Created directory: {directory}")
@@ -37,10 +37,10 @@ def create_file(path, content):
 def main():
     print("🏥 HIPAA Training System V3.0 - Project Setup")
     print("=" * 50)
-    
+
     # Create directory structure
     create_project_structure()
-    
+
     # Create essential configuration files
     create_file('.gitignore', '''__pycache__/
 *.py[cod]
@@ -68,7 +68,7 @@ evidence/
 reports/
 certificates/
 ''')
-    
+
     create_file('.env.example', '''# HIPAA Training System V3.0 - Environment Configuration
 HIPAA_ENCRYPTION_KEY=your-secure-key-here-32-characters-minimum
 HIPAA_SALT=your-encryption-salt-here
@@ -79,7 +79,7 @@ AUDIT_RETENTION_YEARS=6
 DB_PASSWORD=your-postgres-password
 QUIZ_QUESTION_COUNT=10
 ''')
-    
+
     create_file('requirements.txt', '''cryptography>=3.4.8
 sqlalchemy>=1.4.23
 alembic>=1.7.1
@@ -98,7 +98,7 @@ pytest-mock>=3.10.0
 flake8>=6.0.0
 bandit>=1.7.5
 ''')
-    
+
     create_file('content/lessons.json', '''{
     "Sample Lesson": {
         "content": "This is a sample lesson for HIPAA compliance training.",
@@ -113,7 +113,7 @@ bandit>=1.7.5
     }
 }
 ''')
-    
+
     create_file('content/quiz_questions.json', '''[
     {
         "question": "What is the main goal of HIPAA?",
@@ -123,7 +123,7 @@ bandit>=1.7.5
     }
 ]
 ''')
-    
+
     create_file('content/checklist_items.json', '''[
     {
         "text": "Verify Business Associate Agreements",
@@ -132,7 +132,7 @@ bandit>=1.7.5
     }
 ]
 ''')
-    
+
     print("\n🎉 Project setup completed successfully!")
     print("\nNext steps:")
     print("1. Copy .env.example to .env and set secure values")

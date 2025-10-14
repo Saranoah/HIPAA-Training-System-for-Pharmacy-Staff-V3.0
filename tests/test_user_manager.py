@@ -24,11 +24,11 @@ def test_create_user_success(user_manager):
     mock_cursor = MagicMock()
     mock_cursor.lastrowid = 123
     mock_conn.execute.return_value = mock_cursor
-    
+
     user_manager.db._get_connection.return_value.__enter__.return_value = mock_conn
-    
+
     user_id = user_manager.create_user("testuser", "Test User", "staff")
-    
+
     assert user_id == 123
     user_manager.security.log_action.assert_called_once()
 
@@ -55,9 +55,9 @@ def test_create_user_duplicate_username(user_manager):
     """Test user creation with duplicate username"""
     mock_conn = MagicMock()
     mock_conn.execute.side_effect = sqlite3.IntegrityError("UNIQUE constraint failed")
-    
+
     user_manager.db._get_connection.return_value.__enter__.return_value = mock_conn
-    
+
     with pytest.raises(ValueError, match="Username already exists"):
         user_manager.create_user("duplicate", "Test User", "staff")
 
@@ -66,9 +66,9 @@ def test_user_exists_true(user_manager):
     """Test user_exists returns True for existing user"""
     mock_conn = MagicMock()
     mock_conn.execute.return_value.fetchone.return_value = (1,)
-    
+
     user_manager.db._get_connection.return_value.__enter__.return_value = mock_conn
-    
+
     assert user_manager.user_exists(123) is True
 
 
@@ -76,9 +76,9 @@ def test_user_exists_false(user_manager):
     """Test user_exists returns False for non-existent user"""
     mock_conn = MagicMock()
     mock_conn.execute.return_value.fetchone.return_value = None
-    
+
     user_manager.db._get_connection.return_value.__enter__.return_value = mock_conn
-    
+
     assert user_manager.user_exists(999) is False
 
 
@@ -108,11 +108,11 @@ def test_get_user(user_manager):
         'created_at': '2025-01-01'
     }
     mock_conn.execute.return_value.fetchone.return_value = mock_result
-    
+
     user_manager.db._get_connection.return_value.__enter__.return_value = mock_conn
-    
+
     user = user_manager.get_user(1)
-    
+
     assert user is not None
     assert user['username'] == 'testuser'
     assert user['role'] == 'staff'
