@@ -189,7 +189,8 @@ class DatabaseManager:
             user_stats = conn.execute(
                 "SELECT COUNT(*) as total_users, AVG(quiz_score) as avg_score, "
                 "SUM(CASE WHEN quiz_score >= ? THEN 1 ELSE 0 END) * 100.0 / "
-                "NULLIF(COUNT(*), 0) as pass_rate FROM training_progress WHERE quiz_score IS NOT NULL",
+                "NULLIF(COUNT(*), 0) as pass_rate 
+                FROM training_progress WHERE quiz_score IS NOT NULL",
                 (Config.PASS_THRESHOLD,)
             ).fetchone()
 
