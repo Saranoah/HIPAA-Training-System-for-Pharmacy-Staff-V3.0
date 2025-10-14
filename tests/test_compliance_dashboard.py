@@ -2,7 +2,7 @@
 import os
 import json
 import pytest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, MagicMock
 
 def test_generate_enterprise_report_csv(real_compliance_dashboard, tmp_path, monkeypatch):
     dashboard = real_compliance_dashboard
