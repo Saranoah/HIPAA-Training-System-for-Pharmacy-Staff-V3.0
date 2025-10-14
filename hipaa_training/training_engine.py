@@ -225,16 +225,19 @@ class EnhancedTrainingEngine:
                         evidence_input = os.path.abspath(evidence_input)
                         current_dir = os.getcwd()
                         if not evidence_input.startswith(current_dir):
-                            self.console.print(
-                            self.console.print(
+                        self.console.print(
     f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
     "Must be <5MB[/red]"
 )
 
+
                             )
                             continue
                     except Exception:
-                        self.console.print("[red]❌ Invalid file path[/red]")
+                 self.console.print(
+    f"[red]❌ Failed to save evidence: {str(e)}[/red]"
+)
+
                         continue
 
                     if not os.path.exists(evidence_input):
