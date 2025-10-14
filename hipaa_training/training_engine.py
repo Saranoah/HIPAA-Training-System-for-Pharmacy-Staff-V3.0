@@ -197,7 +197,6 @@ class EnhancedTrainingEngine:
 
             for item in checklist_items:
                 question = item.get("text", "")
-                category = item.get("category", "")
                 hint = item.get("validation_hint", "")
 
                 self.console.print(f"\n[bold]{question}[/bold]")
