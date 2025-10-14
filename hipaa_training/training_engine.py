@@ -216,16 +216,18 @@ class EnhancedTrainingEngine:
 self.checklist[question] = (
     response.lower().strip() == "yes"
 )
+if evidence_file:
+    evidence_dir = os.path.join("evidence")
+    os.makedirs(evidence_dir, exist_ok=True)
 
-                if evidence_file:
-                    evidence_dir = os.path.join("evidence")
-                    os.makedirs(evidence_dir, exist_ok=True)
-                    evidence_path = os.path.join(evidence_dir, os.path.basename(evidence_file))
-                    # Simulate evidence save
-                    with open(evidence_path, "w") as f:
-                        f.write("Dummy evidence file for test validation")
+    safe_text = "".join(
+        c for c in evidence_file if c.isalnum() or c in (' ', '_')
+    )
 
-                progress.advance(task)
+    evidence_path = os.path.join(evidence_dir, os.path.basename(safe_text))
+    # Simulate evidence save
+    with open(evidence_path, "w") as f:
+        f.write("Dummy evidence file for test validation")
 
         try:
             input("\nPress Enter to continue...")
