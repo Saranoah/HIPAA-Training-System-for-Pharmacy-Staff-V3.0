@@ -226,7 +226,11 @@ class EnhancedTrainingEngine:
                         current_dir = os.getcwd()
                         if not evidence_input.startswith(current_dir):
                             self.console.print(
-                                "[red]❌ Security error: File must be in current directory tree[/red]"
+                            self.console.print(
+    f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
+    "Must be <5MB[/red]"
+)
+
                             )
                             continue
                     except Exception:
