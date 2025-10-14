@@ -340,5 +340,7 @@ Consult your organization’s Privacy Officer or legal counsel for specific guid
 
 ---
 
-**© 2025 HIPAA Training System for Pharmacy Staff – Version 3.0**  
-*Made with ❤️ for secure healthcare compliance.*
+---
+© 2025 Israa Ali. All rights reserved.  
+HIPAA Training System for Pharmacy Staff V3.0.1
+
