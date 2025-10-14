@@ -1,4 +1,3 @@
-# hipaa_training/models.py
 import os
 import sqlite3
 from contextlib import contextmanager
@@ -16,7 +15,6 @@ class Config:
     AUDIT_RETENTION_YEARS = int(os.getenv('AUDIT_RETENTION_YEARS', '6'))
     MINI_QUIZ_THRESHOLD = int(os.getenv('MINI_QUIZ_THRESHOLD', '70'))
 
-    # CRITICAL: Fail fast if encryption key not set
     ENCRYPTION_KEY = os.getenv('HIPAA_ENCRYPTION_KEY')
     if not ENCRYPTION_KEY:
         raise ValueError(
@@ -37,7 +35,6 @@ class DatabaseManager:
     def _initialize_database(self):
         """Initialize SQLite database with necessary tables and indexes"""
         with self._get_connection() as conn:
-            # Create tables
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -87,7 +84,6 @@ class DatabaseManager:
                 )
             ''')
 
-            # Create indexes for performance
             conn.execute(
                 "CREATE INDEX IF NOT EXISTS idx_user_id ON training_progress(user_id)"
             )
@@ -106,11 +102,7 @@ class DatabaseManager:
 
     @contextmanager
     def _get_connection(self):
-        """
-        Get database connection as context manager with proper error handling
-
-        FIXED: Added @contextmanager decorator to make this work correctly
-        """
+        """Get database connection as context manager"""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         try:
@@ -146,8 +138,7 @@ class DatabaseManager:
         score: Optional[float]
     ) -> None:
         """Save progress with encrypted sensitive data"""
-        encrypted_checklist = self.security.encrypt_data(
-            json.dumps(checklist_data))
+        encrypted_checklist = self.security.encrypt_data(json.dumps(checklist_data))
         with self._get_connection() as conn:
             conn.execute(
                 "INSERT INTO training_progress (user_id, quiz_score, checklist_data, "
@@ -180,20 +171,16 @@ class DatabaseManager:
         return certificate_id
 
     def get_compliance_stats(self) -> Dict:
-        """
-        Retrieve compliance statistics for reporting
-
-        FIXED: Added proper handling for empty database
-        """
+        """Retrieve compliance statistics for reporting"""
         with self._get_connection() as conn:
             user_stats = conn.execute(
-                "SELECT COUNT(*) as total_users, AVG(quiz_score) as avg_score, "
-                "SUM(CASE WHEN quiz_score >= ? THEN 1 ELSE 0 END) * 100.0 / "
-            (
-    "NULLIF(COUNT(*), 0) as pass_rate "
-    "FROM training_progress WHERE quiz_score IS NOT NULL"
-),
-
+                (
+                    "SELECT COUNT(*) as total_users, AVG(quiz_score) as avg_score, "
+                    "SUM(CASE WHEN quiz_score >= ? THEN 1 ELSE 0 END) * 100.0 / "
+                    "NULLIF(COUNT(*), 0) as pass_rate "
+                    "FROM training_progress WHERE quiz_score IS NOT NULL"
+                ),
+                (Config.PASS_THRESHOLD,)
             ).fetchone()
 
             cert_stats = conn.execute(
@@ -205,7 +192,6 @@ class DatabaseManager:
                 (datetime.now(), datetime.now())
             ).fetchone()
 
-        # Handle empty database case
         total_users = user_stats["total_users"] or 0
         if total_users == 0:
             return {
@@ -235,24 +221,18 @@ class UserManager:
         self.security = SecurityManager()
 
     def _sanitize_input(self, input_str: str, max_length: int) -> str:
-        """
-        Sanitize user input to prevent XSS/script injection
-
-        IMPROVED: Uses HTML escaping instead of removing all special chars
-        This preserves legitimate names like O'Brien, José, etc.
-        """
+        """Sanitize user input"""
         import html
         sanitized = html.escape(input_str.strip())
         return sanitized[:max_length]
 
     def create_user(self, username: str, full_name: str, role: str) -> int:
-        """Create a new user with role-based access control"""
+        """Create a new user"""
         username = self._sanitize_input(username, 50)
         full_name = self._sanitize_input(full_name, 100)
 
         if role not in ['admin', 'staff', 'auditor']:
-            raise ValueError(
-                "Invalid role. Use 'admin', 'staff', or 'auditor'.")
+            raise ValueError("Invalid role. Use 'admin', 'staff', or 'auditor'.")
 
         if not username or not full_name:
             raise ValueError("Username and full name cannot be empty.")
@@ -272,15 +252,13 @@ class UserManager:
                 raise ValueError("Username already exists.")
 
     def user_exists(self, user_id: int) -> bool:
-        """Check if user exists in database"""
+        """Check if user exists"""
         with self.db._get_connection() as conn:
-            result = conn.execute(
-                "SELECT 1 FROM users WHERE id = ?", (user_id,)
-            ).fetchone()
+            result = conn.execute("SELECT 1 FROM users WHERE id = ?", (user_id,)).fetchone()
             return bool(result)
 
     def get_user(self, user_id: int) -> Optional[Dict]:
-        """Get user details by ID"""
+        """Get user details"""
         with self.db._get_connection() as conn:
             result = conn.execute(
                 "SELECT id, username, full_name, role, created_at FROM users WHERE id = ?",
@@ -292,27 +270,21 @@ class UserManager:
 
 
 class ComplianceDashboard:
-    """Generates compliance reports in multiple formats"""
+    """Generates compliance reports"""
 
     def __init__(self):
         self.db = DatabaseManager()
 
     def generate_enterprise_report(self, format_type: str) -> str:
-        """
-        Generate compliance report in CSV or JSON format
-
-        FIXED: Line 191 - properly broke the long line using os.path.join
-        """
+        """Generate compliance report in CSV or JSON format"""
         if format_type not in ['csv', 'json']:
             raise ValueError("Invalid format. Use 'csv' or 'json'.")
 
         stats = self.db.get_compliance_stats()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # FIXED: Properly broke the long line using os.path.join
         base_name = f"compliance_dashboard_{timestamp}.{format_type}"
         filename = os.path.join("reports", base_name)
-
         os.makedirs("reports", exist_ok=True)
 
         if format_type == "csv":
@@ -321,7 +293,7 @@ class ComplianceDashboard:
                 writer = csv.DictWriter(f, fieldnames=stats.keys())
                 writer.writeheader()
                 writer.writerow(stats)
-        else:  # json
+        else:
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(stats, f, indent=2, ensure_ascii=False)
 
