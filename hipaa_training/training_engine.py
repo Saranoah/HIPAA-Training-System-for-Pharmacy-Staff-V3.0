@@ -31,7 +31,7 @@ class EnhancedTrainingEngine:
         self.checklist = {}
 
     def display_lesson(self, user_id: int, lesson_title: str) -> None:
-        """Display a lesson with formatted output"""
+        """Display a lesson with formatted output."""
         lesson = self.content.lessons.get(lesson_title)
         if not lesson:
             self.console.print(f"[red]Lesson '{lesson_title}' not found.[/red]")
@@ -57,9 +57,7 @@ class EnhancedTrainingEngine:
 
     def _mini_quiz(self, lesson: Dict) -> bool:
         """
-        Conduct a mini-quiz for lesson comprehension
-
-        FIXED: Quiz randomization bug - now creates copy before shuffling
+        Conduct a mini-quiz for lesson comprehension.
         """
         questions = lesson.get('comprehension_questions', [])
         if not questions:
@@ -72,7 +70,6 @@ class EnhancedTrainingEngine:
         for q in questions:
             self.console.print(f"\n[bold]Question: {q['question']}[/bold]")
 
-            # CRITICAL FIX: Create copy of options before shuffling
             options = q['options'].copy()
             correct_option_text = q['options'][q['correct_index']]
             random.shuffle(options)
@@ -99,7 +96,6 @@ class EnhancedTrainingEngine:
         score = (correct / total) * 100
         self.console.print(f"\n[bold]Score: {score:.1f}%[/bold]")
 
-        # Use configurable threshold from Config
         passed = score >= Config.MINI_QUIZ_THRESHOLD
         if passed:
             self.console.print("[green]✓ Passed comprehension check![/green]")
@@ -112,9 +108,7 @@ class EnhancedTrainingEngine:
 
     def adaptive_quiz(self, user_id: int) -> float:
         """
-        Conduct adaptive final quiz with randomized questions
-
-        FIXED: Quiz randomization bug - options copied before shuffling
+        Conduct adaptive final quiz with randomized questions.
         """
         num_questions = min(15, len(self.content.quiz_questions))
         questions = random.sample(self.content.quiz_questions, num_questions)
@@ -134,7 +128,6 @@ class EnhancedTrainingEngine:
                 f"\n[bold]Question {idx}/{num_questions}: {q['question']}[/bold]"
             )
 
-            # CRITICAL FIX: Create copy of options before shuffling
             options = q['options'].copy()
             correct_option_text = q['options'][q['correct_index']]
             random.shuffle(options)
@@ -143,7 +136,6 @@ class EnhancedTrainingEngine:
             for i, option in enumerate(options, 1):
                 self.console.print(f"{i}. {option}")
 
-            # Get user input with validation
             while True:
                 answer = input("Enter your answer (1-4): ").strip()
                 if answer in ['1', '2', '3', '4']:
@@ -163,9 +155,7 @@ class EnhancedTrainingEngine:
                 self.console.print("[green]✓ Correct![/green]")
                 correct += 1
             else:
-                self.console.print(
-                    f"[red]✗ Incorrect.[/red] {q['explanation']}"
-                )
+                self.console.print(f"[red]✗ Incorrect.[/red] {q['explanation']}")
 
         score = (correct / len(questions)) * 100
 
@@ -193,12 +183,7 @@ class EnhancedTrainingEngine:
 
     def complete_enhanced_checklist(self, user_id: int) -> None:
         """
-        Enhanced compliance checklist with evidence file upload
-
-        FIXES APPLIED:
-        - Added path traversal protection
-        - Implemented chunked file encryption
-        - Better filename sanitization
+        Enhanced compliance checklist with evidence file upload.
         """
         self.console.print(Panel(
             "[bold cyan]HIPAA Compliance Checklist[/bold cyan]\n"
@@ -224,8 +209,10 @@ class EnhancedTrainingEngine:
             evidence_path = None
 
             # Handle evidence file upload if applicable
-            if completed and any(keyword in validation_hint.lower()
-                                 for keyword in ['upload', 'file', 'document']):
+            if completed and any(
+                keyword in validation_hint.lower()
+                for keyword in ['upload', 'file', 'document']
+            ):
                 while True:
                     evidence_input = input(
                         "Enter path to evidence file (PDF/JPG/PNG, <5MB, or press Enter to skip): "
@@ -234,38 +221,29 @@ class EnhancedTrainingEngine:
                     if not evidence_input:
                         break
 
-                    # SECURITY FIX: Path traversal protection
                     try:
                         evidence_input = os.path.abspath(evidence_input)
                         current_dir = os.getcwd()
-
-                        # Ensure file is within allowed directory
                         if not evidence_input.startswith(current_dir):
-                           self.console.print(
-    f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
-    "Must be <5MB[/red]"
-)
+                            self.console.print(
+                                "[red]❌ Security error: File must be in current directory tree[/red]"
                             )
                             continue
                     except Exception:
                         self.console.print("[red]❌ Invalid file path[/red]")
                         continue
 
-                    # Validate file exists
                     if not os.path.exists(evidence_input):
                         self.console.print("[red]❌ File not found[/red]")
                         continue
 
-                    # Validate file size (5MB limit)
                     file_size = os.path.getsize(evidence_input)
                     if file_size > 5 * 1024 * 1024:
                         self.console.print(
-                            f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
-                            "Must be <5MB[/red]"
+                            f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). Must be <5MB[/red]"
                         )
                         continue
 
-                    # Validate file type
                     allowed_extensions = ('.pdf', '.jpg', '.jpeg', '.png')
                     if not evidence_input.lower().endswith(allowed_extensions):
                         self.console.print(
@@ -273,19 +251,18 @@ class EnhancedTrainingEngine:
                         )
                         continue
 
-                    # Create evidence directory
                     evidence_dir = f"evidence/user_{user_id}"
                     os.makedirs(evidence_dir, exist_ok=True)
 
-                    # IMPROVED: Better filename sanitization
-                    safe_text = "".join(c for c in text if c.isalnum() or c in (' ', '_'))
+                    safe_text = "".join(
+                        c for c in text if c.isalnum() or c in (' ', '_')
+                    )
                     safe_text = safe_text[:30].strip().replace(' ', '_')
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     file_ext = os.path.splitext(evidence_input)[1]
                     filename = f"{category}_{safe_text}_{timestamp}{file_ext}"
                     dest_path = os.path.join(evidence_dir, filename)
 
-                    # SECURITY FIX: Use chunked encryption for large files
                     try:
                         self.security.encrypt_file(evidence_input, dest_path)
                         self.console.print(f"[green]✅ Evidence saved: {filename}[/green]")
@@ -300,13 +277,15 @@ class EnhancedTrainingEngine:
             # Save checklist item
             self.checklist[text] = completed
 
-            # Log action with evidence info
-            log_details = f"Item: {text}, Response: {'Completed' if completed else 'Not Completed'}"
+            # Log action
+            log_details = (
+                f"Item: {text}, Response: {'Completed' if completed else 'Not Completed'}"
+            )
             if evidence_path:
                 log_details += f", Evidence: {evidence_path}"
             self.security.log_action(user_id, "CHECKLIST_ITEM_COMPLETED", log_details)
 
-        # Display completion summary
+        # Completion summary
         completed_count = sum(1 for v in self.checklist.values() if v)
         total_count = len(self.checklist)
         completion_rate = (completed_count / total_count * 100) if total_count > 0 else 0
