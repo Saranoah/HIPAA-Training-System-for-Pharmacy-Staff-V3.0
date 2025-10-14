@@ -1,4 +1,3 @@
-# tests/conftest.py
 import pytest
 import os
 import sys
@@ -6,13 +5,14 @@ import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-# Add parent to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# --- Ensure the project root is in PYTHONPATH ---
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
-# Setup environment BEFORE any imports
+# --- Set required environment variables early ---
 os.environ.setdefault('HIPAA_ENCRYPTION_KEY', 'test-key-32-chars-for-testing-only')
 os.environ.setdefault('HIPAA_SALT', 'test-salt-16-hex-bytes')
-
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test_dirs():
@@ -21,12 +21,11 @@ def setup_test_dirs():
     for d in dirs:
         Path(d).mkdir(exist_ok=True)
     yield
-    # Cleanup
+    # Cleanup after all tests
     import shutil
     for d in dirs:
-        if Path(d).exists() and d != 'content':  # Keep content
+        if Path(d).exists() and d != 'content':  # Keep content directory
             shutil.rmtree(d, ignore_errors=True)
-
 
 @pytest.fixture(scope="function")
 def test_db(tmp_path):
@@ -40,9 +39,8 @@ def test_db(tmp_path):
     else:
         os.environ.pop('DB_URL', None)
 
-
 @pytest.fixture(scope="function", autouse=True)
 def mock_database_for_tests(monkeypatch, tmp_path):
-    """Automatically provide temp database for all tests"""
+    """Automatically provide a temporary DB for all tests"""
     db_file = tmp_path / "test_auto.db"
     monkeypatch.setenv('DB_URL', str(db_file))
