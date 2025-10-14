@@ -37,14 +37,12 @@ class EnhancedTrainingEngine:
             self.console.print(f"[red]Lesson '{lesson_title}' not found.[/red]")
             return
 
-        # Display lesson in formatted panel
         self.console.print(Panel(
             f"[bold cyan]{lesson_title}[/bold cyan]\n\n{lesson['content']}",
             border_style="cyan",
             padding=(1, 2)
         ))
 
-        # Display key points in a table
         table = Table(title="Key Points", show_header=False, border_style="blue")
         table.add_column("Point", style="green")
 
@@ -56,9 +54,7 @@ class EnhancedTrainingEngine:
         input("\n[dim]Press Enter to continue...[/dim]")
 
     def _mini_quiz(self, lesson: Dict) -> bool:
-        """
-        Conduct a mini-quiz for lesson comprehension.
-        """
+        """Conduct a mini-quiz for lesson comprehension."""
         questions = lesson.get('comprehension_questions', [])
         if not questions:
             return True
@@ -69,7 +65,6 @@ class EnhancedTrainingEngine:
 
         for q in questions:
             self.console.print(f"\n[bold]Question: {q['question']}[/bold]")
-
             options = q['options'].copy()
             correct_option_text = q['options'][q['correct_index']]
             random.shuffle(options)
@@ -78,7 +73,6 @@ class EnhancedTrainingEngine:
             for i, option in enumerate(options, 1):
                 self.console.print(f"{i}. {option}")
 
-            # Get user input with validation
             while True:
                 answer = input("Enter your answer (1-4): ").strip()
                 if answer in ['1', '2', '3', '4']:
@@ -107,12 +101,9 @@ class EnhancedTrainingEngine:
         return passed
 
     def adaptive_quiz(self, user_id: int) -> float:
-        """
-        Conduct adaptive final quiz with randomized questions.
-        """
+        """Conduct adaptive final quiz with randomized questions."""
         num_questions = min(15, len(self.content.quiz_questions))
         questions = random.sample(self.content.quiz_questions, num_questions)
-
         correct = 0
         answers = {}
 
@@ -159,7 +150,6 @@ class EnhancedTrainingEngine:
 
         score = (correct / len(questions)) * 100
 
-        # Display final results
         if score >= Config.PASS_THRESHOLD:
             self.console.print(Panel(
                 f"[bold green]🎉 Congratulations![/bold green]\n"
@@ -178,13 +168,10 @@ class EnhancedTrainingEngine:
 
         self.db.save_sensitive_progress(user_id, answers, score)
         self.security.log_action(user_id, "QUIZ_COMPLETED", f"Score: {score:.1f}%")
-
         return score
 
     def complete_enhanced_checklist(self, user_id: int) -> None:
-        """
-        Enhanced compliance checklist with evidence file upload.
-        """
+        """Enhanced compliance checklist with evidence file upload."""
         self.console.print(Panel(
             "[bold cyan]HIPAA Compliance Checklist[/bold cyan]\n"
             "Complete each item and optionally upload evidence",
@@ -200,7 +187,6 @@ class EnhancedTrainingEngine:
             if validation_hint:
                 self.console.print(f"   💡 [dim]{validation_hint}[/dim]")
 
-            # Get completion status
             response = ""
             while response not in ["y", "n", "yes", "no"]:
                 response = input("Completed? (yes/no): ").strip().lower()
@@ -208,7 +194,6 @@ class EnhancedTrainingEngine:
             completed = response in ["y", "yes"]
             evidence_path = None
 
-            # Handle evidence file upload if applicable
             if completed and any(
                 keyword in validation_hint.lower()
                 for keyword in ['upload', 'file', 'document']
@@ -225,19 +210,12 @@ class EnhancedTrainingEngine:
                         evidence_input = os.path.abspath(evidence_input)
                         current_dir = os.getcwd()
                         if not evidence_input.startswith(current_dir):
-                        self.console.print(
-    f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
-    "Must be <5MB[/red]"
-)
-
-
-                            )
+                            self.console.print("[red]❌ Invalid file path[/red]")
                             continue
-                    except Exception:
-                 self.console.print(
-    f"[red]❌ Failed to save evidence: {str(e)}[/red]"
-)
-
+                    except Exception as e:
+                        self.console.print(
+                            f"[red]❌ Failed to process file: {str(e)}[/red]"
+                        )
                         continue
 
                     if not os.path.exists(evidence_input):
@@ -247,7 +225,8 @@ class EnhancedTrainingEngine:
                     file_size = os.path.getsize(evidence_input)
                     if file_size > 5 * 1024 * 1024:
                         self.console.print(
-                            f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). Must be <5MB[/red]"
+                            f"[red]❌ File too large ({file_size / 1024 / 1024:.1f}MB). "
+                            "Must be <5MB[/red]"
                         )
                         continue
 
@@ -272,7 +251,9 @@ class EnhancedTrainingEngine:
 
                     try:
                         self.security.encrypt_file(evidence_input, dest_path)
-                        self.console.print(f"[green]✅ Evidence saved: {filename}[/green]")
+                        self.console.print(
+                            f"[green]✅ Evidence saved: {filename}[/green]"
+                        )
                         evidence_path = filename
                         break
                     except Exception as e:
@@ -281,10 +262,7 @@ class EnhancedTrainingEngine:
                         )
                         continue
 
-            # Save checklist item
             self.checklist[text] = completed
-
-            # Log action
             log_details = (
                 f"Item: {text}, Response: {'Completed' if completed else 'Not Completed'}"
             )
@@ -292,7 +270,6 @@ class EnhancedTrainingEngine:
                 log_details += f", Evidence: {evidence_path}"
             self.security.log_action(user_id, "CHECKLIST_ITEM_COMPLETED", log_details)
 
-        # Completion summary
         completed_count = sum(1 for v in self.checklist.values() if v)
         total_count = len(self.checklist)
         completion_rate = (completed_count / total_count * 100) if total_count > 0 else 0
