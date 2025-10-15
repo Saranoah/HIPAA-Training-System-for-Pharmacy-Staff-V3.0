@@ -1,45 +1,46 @@
 # tests/test_compliance_dashboard.py
-import os
-import json
 import pytest
-from unittest.mock import Mock, patch, MagicMock, mock_open
+from unittest.mock import patch, mock_open
+
 
 def test_generate_enterprise_report_csv(real_compliance_dashboard, tmp_path, monkeypatch):
     dashboard = real_compliance_dashboard
-    # Ensure reports directory is under temporary working directory
     monkeypatch.chdir(tmp_path)
-    # Patch open to avoid actual file IO and to capture calls
     m_open = mock_open()
-    with patch('builtins.open', m_open):
-        filename = dashboard.generate_enterprise_report('csv')
-        assert filename.endswith('.csv')
-        # open should have been called to write the file
+
+    with patch("builtins.open", m_open):
+        filename = dashboard.generate_enterprise_report("csv")
+        assert filename.endswith(".csv")
         assert m_open.called
+
 
 def test_generate_enterprise_report_json(real_compliance_dashboard, tmp_path, monkeypatch):
     dashboard = real_compliance_dashboard
     monkeypatch.chdir(tmp_path)
     m_open = mock_open()
-    with patch('builtins.open', m_open):
-        filename = dashboard.generate_enterprise_report('json')
-        assert filename.endswith('.json')
+
+    with patch("builtins.open", m_open):
+        filename = dashboard.generate_enterprise_report("json")
+        assert filename.endswith(".json")
         assert m_open.called
+
 
 def test_generate_report_invalid_format(real_compliance_dashboard):
     with pytest.raises(ValueError):
-        real_compliance_dashboard.generate_enterprise_report('xml')
+        real_compliance_dashboard.generate_enterprise_report("xml")
+
 
 def test_generate_report_creates_directory(real_compliance_dashboard, tmp_path, monkeypatch):
-    # Remove reports dir and confirm it's created by the function
     monkeypatch.chdir(tmp_path)
     reports_dir = tmp_path / "reports"
+
     if reports_dir.exists():
-        # remove if present
         for child in reports_dir.iterdir():
             child.unlink()
         reports_dir.rmdir()
+
     assert not reports_dir.exists()
-    # Call function (uses real dashboard and will create reports/)
-    filename = real_compliance_dashboard.generate_enterprise_report('csv')
+
+    filename = real_compliance_dashboard.generate_enterprise_report("csv")
     assert (tmp_path / "reports").exists()
     assert filename.startswith(str(tmp_path / "reports"))
