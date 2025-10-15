@@ -1,4 +1,4 @@
-#models.py
+#hipaa_training/models.py
 import hashlib
 import json
 import os
