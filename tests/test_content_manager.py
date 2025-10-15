@@ -1,4 +1,4 @@
-# tests/test_content_manager.py 
+# tests/test_content_manager.py
 import pytest
 from unittest.mock import patch, mock_open, MagicMock
 from hipaa_training.content_manager import ContentManager
@@ -94,13 +94,13 @@ def test_get_all_lessons(content_manager):
 def test_get_quiz_question_count(content_manager):
     """Test getting quiz question count"""
     count = content_manager.get_quiz_question_count()
-    assert count >= 1
+    assert count == 1
 
 
 def test_get_checklist_item_count(content_manager):
     """Test getting checklist item count"""
     count = content_manager.get_checklist_item_count()
-    assert count >= 1
+    assert count == 1
 
 
 def test_create_default_content_on_missing_file(tmp_path):
@@ -163,3 +163,23 @@ def test_validation_invalid_quiz_structure(tmp_path):
 
     with pytest.raises(ValueError, match="missing required key"):
         ContentManager(str(bad_content_dir))
+
+
+def test_add_lesson_functionality(tmp_path):
+    """Test adding a new lesson"""
+    content_dir = tmp_path / "content"
+    content_dir.mkdir()
+    
+    cm = ContentManager(str(content_dir))
+    
+    # Add a new lesson
+    cm.add_lesson("New Lesson", "New content", ["Key point 1", "Key point 2"])
+    
+    # Verify lesson was added
+    assert "New Lesson" in cm.lessons
+    assert cm.lessons["New Lesson"]["content"] == "New content"
+    
+    # Verify file was updated
+    with open(content_dir / "lessons.json", 'r') as f:
+        saved_lessons = json.load(f)
+    assert "New Lesson" in saved_lessons
