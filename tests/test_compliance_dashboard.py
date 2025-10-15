@@ -1,7 +1,12 @@
 # tests/test_compliance_dashboard.py
-
 import pytest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, MagicMock
+
+# Explicit safety import
+import builtins
+import unittest.mock as mock
+mock_open = mock.mock_open
+patch = mock.patch
 
 
 def test_generate_enterprise_report_csv(real_compliance_dashboard, tmp_path, monkeypatch):
