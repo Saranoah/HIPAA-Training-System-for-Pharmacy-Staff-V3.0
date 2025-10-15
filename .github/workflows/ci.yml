@@ -177,3 +177,15 @@ jobs:
         python -m py_compile main.py
         python -m py_compile hipaa_training/*.py
         echo "✅ Python syntax valid"
+
+        # .github/workflows/ci.yml (add security checks)
+- name: Security Tests
+  run: |
+    pytest tests/test_security_comprehensive.py -v
+    pytest --cov=hipaa_training --cov-fail-under=80
+
+- name: Security Audit
+  run: |
+    pip install safety bandit
+    safety check
+    bandit -r hipaa_training/ -ll
