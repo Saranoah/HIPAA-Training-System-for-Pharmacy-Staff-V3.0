@@ -3,8 +3,8 @@ import pytest
 from unittest.mock import patch, mock_open, MagicMock
 
 # Explicit safety import
-import builtins
-import unittest.mock as mock
+from unittest import mock
+with patch("builtins.open", mock.mock_open()) as m:
 mock_open = mock.mock_open
 patch = mock.patch
 
