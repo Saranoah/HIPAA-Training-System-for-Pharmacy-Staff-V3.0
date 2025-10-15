@@ -16,6 +16,7 @@ class CLI:
     - Better error handling
     - User input validation
     - Improved UX with Rich formatting
+    - Secure logging using validated input
     """
 
     def __init__(self):
@@ -34,6 +35,19 @@ class CLI:
             try:
                 self._display_menu()
                 choice = input("\n👉 Enter your choice (1-5): ").strip()
+
+                # ✅ Validate and sanitize choice before logging or using
+                try:
+                    choice = self.security.validate_input(
+                        choice,
+                        field_name="menu_choice",
+                        max_length=10,
+                        pattern=r"^[1-5]$"
+                    )
+                except ValueError:
+                    self.console.print("[red]❌ Invalid input detected. Please enter 1-5.[/red]")
+                    continue
+
                 self.security.log_action(0, "MENU_ACCESS", f"Selected option: {choice}")
 
                 if choice == "1":
@@ -275,5 +289,4 @@ class CLI:
             )
         except Exception as e:
             self.console.print(f"[red]❌ Report generation failed: {str(e)}[/red]")
-
 # ...end of file...
