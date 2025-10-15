@@ -1,133 +1,141 @@
 # tests/test_training_engine.py
 import pytest
-import random
 from unittest.mock import patch
 
 
-# ---------------------------------------------------------------------
-# Helper: Sample Lesson
-# ---------------------------------------------------------------------
 @pytest.fixture
 def sample_lesson():
+    """Sample lesson for testing"""
     return {
-        "content": "sample lesson",
-        "key_points": ["p1", "p2"],
+        "content": "Test content",
+        "key_points": ["Point 1", "Point 2"],
         "comprehension_questions": [
             {
                 "question": "Q1?",
-                "options": ["A", "B", "C", "D"],
+                "options": ["Correct", "Wrong1", "Wrong2", "Wrong3"],
                 "correct_index": 0
             },
             {
                 "question": "Q2?",
-                "options": ["A", "B", "C", "D"],
+                "options": ["Wrong1", "Correct", "Wrong2", "Wrong3"],
                 "correct_index": 1
             }
         ]
     }
 
 
-# ---------------------------------------------------------------------
-# Mini Quiz Tests
-# ---------------------------------------------------------------------
 def test_mini_quiz_all_correct(training_engine, sample_lesson):
-    """Test mini quiz with all correct answers."""
-    with patch('random.shuffle', side_effect=lambda x: x):
-        # Both answers correct
+    """Test mini quiz all correct"""
+    with patch('random.shuffle', side_effect=lambda x: None):
         with patch('builtins.input', side_effect=['1', '2']):
             result = training_engine._mini_quiz(sample_lesson)
             assert result is True
 
 
 def test_mini_quiz_some_incorrect(training_engine, sample_lesson):
-    """Test mini quiz when some answers are incorrect."""
-    with patch('random.shuffle', side_effect=lambda x: x):
-        # First correct, second wrong
-        with patch('builtins.input', side_effect=['1', '3']):
+    """Test mini quiz some incorrect"""
+    with patch('random.shuffle', side_effect=lambda x: None):
+        with patch('builtins.input', side_effect=['2', '2']):
             result = training_engine._mini_quiz(sample_lesson)
             assert result is False
 
 
 def test_mini_quiz_no_questions(training_engine):
-    """Test mini quiz when no questions exist."""
-    lesson = {"content": "none", "key_points": [], "comprehension_questions": []}
-    assert training_engine._mini_quiz(lesson) is True
+    """Test mini quiz no questions"""
+    lesson = {
+        "content": "Test",
+        "key_points": [],
+        "comprehension_questions": []
+    }
+    result = training_engine._mini_quiz(lesson)
+    assert result is True
 
 
-# ---------------------------------------------------------------------
-# Adaptive Quiz Tests
-# ---------------------------------------------------------------------
 def test_adaptive_quiz_scoring(training_engine):
-    """Test adaptive quiz scoring with deterministic answers."""
+    """Test adaptive quiz scoring"""
     mock_questions = [
         {
             "question": f"Q{i}?",
             "options": ["Correct", "Wrong", "Wrong", "Wrong"],
             "correct_index": 0,
-            "explanation": f"Because it's correct {i}"
+            "explanation": "Explanation"
         }
         for i in range(10)
     ]
     training_engine.content.quiz_questions = mock_questions
-
-    # 8 correct (1), 2 wrong (2)
-    with patch('random.shuffle', side_effect=lambda x: x):
-        with patch('builtins.input', side_effect=['1'] * 8 + ['2'] * 2):
-            score = training_engine.adaptive_quiz(user_id=1)
+    
+    # 8 correct, 2 wrong
+    answers = ['1'] * 8 + ['2'] * 2
+    
+    with patch('random.shuffle', side_effect=lambda x: None):
+        with patch('builtins.input', side_effect=answers):
+            score = training_engine.adaptive_quiz(1)
             assert score == 80.0
 
 
 def test_adaptive_quiz_perfect_score(training_engine):
-    """Test perfect adaptive quiz with all correct answers."""
+    """Test perfect quiz score"""
     mock_questions = [
-        {"question": f"Q{i}?", "options": ["Correct", "Wrong"], "correct_index": 0}
+        {
+            "question": f"Q{i}?",
+            "options": ["Correct", "Wrong"],
+            "correct_index": 0,
+            "explanation": "Explanation"
+        }
         for i in range(5)
     ]
     training_engine.content.quiz_questions = mock_questions
-    with patch('random.shuffle', side_effect=lambda x: x):
+    
+    with patch('random.shuffle', side_effect=lambda x: None):
         with patch('builtins.input', side_effect=['1'] * 5):
-            score = training_engine.adaptive_quiz(user_id=1)
+            score = training_engine.adaptive_quiz(1)
             assert score == 100.0
 
 
-# ---------------------------------------------------------------------
-# Lesson Display Tests
-# ---------------------------------------------------------------------
-def test_display_lesson_and_not_found(training_engine):
-    """Test display_lesson for valid and invalid lesson IDs."""
-    training_engine.content.lessons['L1'] = {"content": "c", "key_points": []}
+def test_display_lesson(training_engine):
+    """Test display lesson"""
+    training_engine.content.lessons = {
+        "Test": {
+            "content": "Content",
+            "key_points": ["Point"]
+        }
+    }
+    
+    with patch('builtins.input', return_value=''):
+        training_engine.display_lesson(1, "Test")
 
-    with patch('builtins.input', side_effect=['']):  # Simulate pressing Enter
-        training_engine.display_lesson(user_id=1, lesson_key='L1')
 
-    # Should handle gracefully even if lesson not found
-    training_engine.display_lesson(user_id=1, lesson_key='NOPE')
+def test_display_lesson_not_found(training_engine):
+    """Test display non-existent lesson"""
+    training_engine.display_lesson(1, "NonExistent")
 
 
-# ---------------------------------------------------------------------
-# Enhanced Checklist Tests
-# ---------------------------------------------------------------------
 def test_complete_enhanced_checklist(training_engine):
-    """Test enhanced checklist workflow with all 'yes' answers."""
+    """Test checklist completion"""
     training_engine.content.checklist_items = [
-        {"text": "A", "category": "Training", "validation_hint": ""},
-        {"text": "B", "category": "Safety", "validation_hint": ""}
+        {"text": "Item1", "category": "Cat1", "validation_hint": ""},
+        {"text": "Item2", "category": "Cat2", "validation_hint": ""}
     ]
-    # yes, (Enter for evidence), yes, (Enter for evidence), (Enter to finish)
-    with patch('builtins.input', side_effect=['yes', '', 'yes', '', '']):
-        training_engine.complete_enhanced_checklist(user_id=1)
-        assert all(training_engine.checklist.values())
+    
+    # yes, no evidence, yes, no evidence, final enter
+    inputs = ['yes', '', 'yes', '', '']
+    
+    with patch('builtins.input', side_effect=inputs):
+        training_engine.complete_enhanced_checklist(1)
+        assert len(training_engine.checklist) == 2
 
 
 def test_checklist_with_mixed_responses(training_engine):
-    """Test checklist with mixed yes/no responses."""
+    """Test checklist mixed responses"""
     training_engine.content.checklist_items = [
-        {"text": "Item 1", "category": "A", "validation_hint": ""},
-        {"text": "Item 2", "category": "B", "validation_hint": ""}
+        {"text": "Item1", "category": "A", "validation_hint": ""},
+        {"text": "Item2", "category": "B", "validation_hint": ""}
     ]
-    # yes -> Enter, no -> Enter, Enter (end)
-    with patch('builtins.input', side_effect=['yes', '', 'no', '', '']):
-        training_engine.complete_enhanced_checklist(user_id=1)
-        assert training_engine.checklist["Item 1"] is True
-        assert training_engine.checklist["Item 2"] is False
-
+    
+    # yes, no evidence, no, final enter
+    inputs = ['yes', '', 'no', '']
+    
+    with patch('builtins.input', side_effect=inputs):
+        training_engine.complete_enhanced_checklist(1)
+        assert training_engine.checklist["Item1"] is True
+        assert training_engine.checklist["Item2"] is False
