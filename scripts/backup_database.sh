@@ -1,5 +1,3 @@
-
-
 #!/bin/bash
 
 HIPAA Training System - Database Backup Script
