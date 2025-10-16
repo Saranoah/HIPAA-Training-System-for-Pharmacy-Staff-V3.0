@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#scripts/manual_test.py
 """
 Interactive manual testing script
 Guides tester through complete user workflow
