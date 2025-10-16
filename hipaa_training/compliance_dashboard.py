@@ -6,8 +6,13 @@ from datetime import datetime
 from pathlib import Path
 
 class ComplianceDashboard:
-    def __init__(self):
-        self.reports_dir = "reports"
+    def __init__(self, reports_dir="reports"):
+        self.reports_dir = Path(reports_dir)
+        self._create_reports_directory()
+    
+    def _create_reports_directory(self):
+        """Create reports directory securely."""
+        self.reports_dir.mkdir(mode=0o750, parents=True, exist_ok=True)
     
     def generate_enterprise_report(self, format_type):
         """Generate enterprise report in specified format."""
@@ -15,12 +20,9 @@ class ComplianceDashboard:
         if format_type not in valid_formats:
             raise ValueError(f"Unsupported format: {format_type}. Supported formats: {valid_formats}")
         
-        # Create reports directory
-        os.makedirs(self.reports_dir, exist_ok=True)
-        
         # Generate filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{self.reports_dir}/enterprise_report_{timestamp}.{format_type}"
+        filename = self.reports_dir / f"enterprise_report_{timestamp}.{format_type}"
         
         # Generate report content based on format
         if format_type == "csv":
@@ -28,7 +30,7 @@ class ComplianceDashboard:
         else:  # json
             self._generate_json_report(filename)
         
-        return filename
+        return str(filename)
     
     def _generate_csv_report(self, filename):
         """Generate CSV format report."""
@@ -50,3 +52,10 @@ class ComplianceDashboard:
         }
         with open(filename, 'w') as jsonfile:
             json.dump(report_data, jsonfile, indent=2)
+
+
+# Example usage
+if __name__ == "__main__":
+    dashboard = ComplianceDashboard()
+    report_path = dashboard.generate_enterprise_report("csv")
+    print(f"Report generated at: {report_path}")
