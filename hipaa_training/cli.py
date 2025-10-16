@@ -1,3 +1,4 @@
+#hipaa_training/cli.py
 from datetime import datetime
 from rich.console import Console
 from rich.panel import Panel
