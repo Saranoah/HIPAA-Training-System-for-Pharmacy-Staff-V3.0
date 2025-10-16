@@ -1,5 +1,3 @@
-
-
 #!/bin/bash
 
 Complete Test Suite Runner
