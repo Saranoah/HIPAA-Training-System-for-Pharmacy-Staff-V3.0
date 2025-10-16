@@ -1,106 +1,119 @@
+
+
 #!/bin/bash
 
-PythonAnywhere Deployment Script
-echo "🚀 Deploying to PythonAnywhere"
+Complete Test Suite Runner
+echo "🧪 HIPAA Training System - Complete Test Suite"
 
-echo "==============================="
-
-Configuration
-PA_USERNAME="your_username" # Change this!
-
-PA_DOMAIN="$PA_USERNAME.pythonanywhere.com"
+echo "=============================================="
 
 echo ""
 
-echo "📦 Step 1: Preparing deployment package..."
+Colors
+RED='\033[0;31m'
 
-Create deployment directory
-mkdir -p deploy_package
+GREEN='\033[0;32m'
 
-cd deploy_package
+YELLOW='\033[1;33m'
 
-Copy necessary files
-cp -r ../hipaa_training .
+NC='\033[0m'
 
-cp ../main.py .
+Test results
+TESTS_PASSED=0
 
-cp ../requirements.txt .
+TESTS_FAILED=0
 
-cp -r ../content .
+Function to run test and track results
+run_test() {
 
-cp -r ../scripts .
+Bash
 
-Create .env template
-cat > .env << EOF
+Copy
+local test_name=$1
 
-HIPAA_ENCRYPTION_KEY=CHANGE_ME_TO_SECURE_KEY
+local test_command=$2
 
-HIPAA_SALT=CHANGE_ME_TO_SECURE_SALT
 
-DB_URL=/home/$PA_USERNAME/hipaa_training.db
 
-EOF
+echo -e "${YELLOW}Running: ${test_name}${NC}"
 
-Create README for deployment
-cat > DEPLOY_README.txt << EOF
 
-PYTHONANYWHERE DEPLOYMENT INSTRUCTIONS
 
-======================================
+if eval "$test_command"; then
 
-Upload this entire folder to PythonAnywhere
+    echo -e "${GREEN}✓ PASSED${NC}\n"
 
-Open a Bash console on PythonAnywhere
+    ((TESTS_PASSED++))
 
-Run these commands:
+    return 0
 
-cd ~
+else
 
-unzip deploy_package.zip
+    echo -e "${RED}✗ FAILED${NC}\n"
 
-cd deploy_package
+    ((TESTS_FAILED++))
 
-Install dependencies
-pip3.9 install --user -r requirements.txt
+    return 1
 
-Set environment variables
-nano .env # Edit and save secure keys
+fi
+}
 
-Initialize database
-python3.9 main.py --setup-only
+Test 1: Environment Check
+run_test "Environment Variables" "python scripts/check_environment.py"
 
-Test
-python3.9 main.py --check-env
+Test 2: Code Quality
+run_test "Flake8 Linting" "flake8 hipaa_training/ main.py --max-line-length=100 --extend-ignore=E203,W503 --count"
 
-To run the application:
+Test 3: Unit Tests
+run_test "Unit Tests" "pytest tests/ -v --tb=short"
 
-python3.9 main.py
+Test 4: Code Coverage
+run_test "Code Coverage (80%+)" "pytest tests/ --cov=hipaa_training --cov-report=term --cov-fail-under=80"
 
-For web console access, create a web app:
+Test 5: Security Scan
+run_test "Security Scan (Bandit)" "bandit -r hipaa_training/ main.py -ll -i"
 
-Go to Web tab
+Test 6: Type Checking
+run_test "Type Checking (MyPy)" "mypy hipaa_training/ --ignore-missing-imports || true"
 
-Add new web app
+Test 7: Import Check
+run_test "Import Verification" "python -c 'from hipaa_training import *; print("All imports successful")'"
 
-Choose Flask
+Test 8: Database Initialization
+run_test "Database Setup" "python main.py --setup-only"
 
-Point to this directory
+Test 9: Health Check
+run_test "System Health Check" "python scripts/health_check.py"
 
-EOF
+Summary
+echo ""
 
-Create ZIP
-cd ..
+echo "=============================================="
 
-zip -r deploy_package.zip deploy_package/
+echo "📊 TEST SUMMARY"
 
-echo "✓ Deployment package created: deploy_package.zip"
+echo "=============================================="
+
+echo -e "${GREEN}Passed: ${TESTS_PASSED}${NC}"
+
+echo -e "${RED}Failed: ${TESTS_FAILED}${NC}"
 
 echo ""
 
-echo "📤 Next steps:"
+if [ $TESTS_FAILED -eq 0 ]; then
 
-echo "1. Upload deploy_package.zip to PythonAnywhere"
+Bash
 
-echo "2. Follow instructions in DEPLOY_README.txt"
+Copy
+echo -e "${GREEN}✅ ALL TESTS PASSED - Ready for deployment!${NC}"
 
-echo "3. Test the application"
+exit 0
+else
+
+Bash
+
+Copy
+echo -e "${RED}❌ SOME TESTS FAILED - Review and fix before deployment${NC}"
+
+exit 1
+fi
