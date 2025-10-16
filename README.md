@@ -371,8 +371,6 @@ pytest tests/test_security_comprehensive.py -v
 | Rate Limiting | 95% | ✅ PASSED |
 | Integration Tests | 96% | ✅ PASSED |
 
-**Last Audit:** 2025-01-16  
-**Next Audit:** 2025-04-16
 ---
 
 ## 🔗 Resources
