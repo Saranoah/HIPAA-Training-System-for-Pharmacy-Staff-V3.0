@@ -1,6 +1,4 @@
-# hipaa_training/content_manager.py
 import json
-import os
 from pathlib import Path
 from typing import Dict, List, Any
 import logging
@@ -113,4 +111,5 @@ class ContentManager:
         with open(self.content_dir / "quiz_questions.json", 'w', encoding='utf-8') as f:
             json.dump(self.quiz_questions, f, indent=2)
         
-        with open(self.content_dir / "checklist_items.json", ' '
+        with open(self.content_dir / "checklist_items.json", 'w', encoding='utf-8') as f:
+            json.dump(self.checklist_items, f, indent=2)
