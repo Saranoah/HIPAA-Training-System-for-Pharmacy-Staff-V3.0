@@ -1,20 +1,12 @@
-"""
-HIPAA Training System V3.0 - Main Entry Point
-
-A production-ready training application for pharmacy staff to complete
-HIPAA compliance training with secure authentication, lessons, adaptive
-quizzes, checklists, and automatic certificate generation.
-
-Author: Israa Ali
-GitHub: https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V3.0
-License: MIT
-"""
-
 import os
 import sys
 import platform
 import argparse
+import logging
+from pathlib import Path
 
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def setup_production_environment():
     """
@@ -36,30 +28,32 @@ def setup_production_environment():
 
     # Create all required directories
     for directory in required_dirs:
-        os.makedirs(directory, exist_ok=True)
-        print(f"✓ Created directory: {directory}/")
+        dir_path = Path(directory)
+        dir_path.mkdir(parents=True, exist_ok=True)
+        logging.info(f"✓ Created directory: {dir_path}")
 
     # Set secure permissions (Unix/Linux/macOS only)
     if platform.system() != 'Windows':
         for directory in required_dirs:
+            dir_path = Path(directory)
             try:
-                os.chmod(directory, 0o700)  # rwx------
-                print(f"✓ Secured permissions: {directory}/")
+                dir_path.chmod(0o700)  # rwx------
+                logging.info(f"✓ Secured permissions: {dir_path}")
             except Exception as e:
-                print(f"⚠ Warning: Could not set permissions on {directory}/: {e}")
+                logging.warning(f"⚠ Warning: Could not set permissions on {dir_path}: {e}")
     else:
-        print("ℹ Running on Windows - skipping Unix permission settings")
+        logging.info("ℹ Running on Windows - skipping Unix permission settings")
 
     # Initialize database
     try:
         from hipaa_training.models import DatabaseManager
         DatabaseManager()
-        print("✓ Database initialized successfully")
+        logging.info("✓ Database initialized successfully")
     except Exception as e:
-        print(f"❌ Failed to initialize database: {e}")
+        logging.error(f"❌ Failed to initialize database: {e}")
         sys.exit(1)
 
-    print("\n✅ Production environment setup complete!\n")
+    logging.info("\n✅ Production environment setup complete!\n")
 
 
 def check_environment():
@@ -76,27 +70,27 @@ def check_environment():
             missing_vars.append(var)
 
     if missing_vars:
-        print("❌ CRITICAL: Missing required environment variables:")
+        logging.error("❌ CRITICAL: Missing required environment variables:")
         for var in missing_vars:
-            print(f"   - {var}")
-        print("\nTo generate a secure encryption key, run:")
-        print("   python -c 'import secrets; print(secrets.token_urlsafe(32))'")
-        print("\nThen set it in your environment:")
-        print("   export HIPAA_ENCRYPTION_KEY='<your-generated-key>'")
-        print("   # or on Windows:")
-        print("   set HIPAA_ENCRYPTION_KEY=<your-generated-key>")
+            logging.error(f"   - {var}")
+        logging.error("\nTo generate a secure encryption key, run:")
+        logging.error("   python -c 'import secrets; print(secrets.token_urlsafe(32))'")
+        logging.error("\nThen set it in your environment:")
+        logging.error("   export HIPAA_ENCRYPTION_KEY='<your-generated-key>'")
+        logging.error("   # or on Windows:")
+        logging.error("   set HIPAA_ENCRYPTION_KEY=<your-generated-key>")
         sys.exit(1)
 
 
 def display_system_info():
     """Display system information for debugging"""
-    print("="*60)
-    print("HIPAA Training System V3.0")
-    print("="*60)
-    print(f"Python Version: {sys.version}")
-    print(f"Platform: {platform.system()} {platform.release()}")
-    print(f"Working Directory: {os.getcwd()}")
-    print("="*60 + "\n")
+    logging.info("="*60)
+    logging.info("HIPAA Training System V3.0")
+    logging.info("="*60)
+    logging.info(f"Python Version: {sys.version}")
+    logging.info(f"Platform: {platform.system()} {platform.release()}")
+    logging.info(f"Working Directory: {os.getcwd()}")
+    logging.info("="*60 + "\n")
 
 
 def main():
@@ -132,53 +126,4 @@ Examples:
     )
 
     parser.add_argument(
-        '--debug',
-        action='store_true',
-        help='Enable debug mode with verbose output'
-    )
-
-    args = parser.parse_args()
-
-    # Display system info in debug mode
-    if args.debug:
-        display_system_info()
-
-    # Check environment variables
-    if args.check_env:
-        print("Checking environment configuration...")
-        check_environment()
-        print("✅ All required environment variables are set!")
-        return 0
-
-    # Setup environment
-    try:
-        check_environment()  # Verify env vars first
-        setup_production_environment()
-    except Exception as e:
-        print(f"❌ Setup failed: {e}")
-        return 1
-
-    # Exit if setup-only flag is set
-    if args.setup_only:
-        print("Setup complete. Exiting as requested (--setup-only).")
-        return 0
-
-    # Start the application
-    try:
-        from hipaa_training.cli import CLI
-        cli = CLI()
-        cli.run()
-        return 0
-    except KeyboardInterrupt:
-        print("\n\n👋 Training session interrupted by user. Goodbye!")
-        return 0
-    except Exception as e:
-        print(f"\n❌ Fatal error: {e}")
-        if args.debug:
-            import traceback
-            traceback.print_exc()
-        return 1
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+        '-- '--
