@@ -25,7 +25,8 @@ def setup_test_environment():
     """Setup directories for all tests"""
     dirs = ['data', 'content', 'reports', 'evidence', 'logs', 'certificates']
     for d in dirs:
-        Path(d).mkdir(exist_ok=True)
+        dir_path = Path(d)
+        dir_path.mkdir(parents=True, exist_ok=True)
     yield
     for d in dirs:
         if d != 'content' and Path(d).exists():
@@ -110,36 +111,4 @@ def real_compliance_dashboard(temp_db):
                         "completion_rate": 66.7
                     },
                     "users": [
-                        {"user_id": 1, "training_completed": True, "score": 95, "completion_date": "2024-01-15"},
-                        {"user_id": 2, "training_completed": False, "score": 0, "completion_date": None},
-                        {"user_id": 3, "training_completed": True, "score": 88, "completion_date": "2024-01-14"}
-                    ]
-                }
-                with open(filename, 'w') as jsonfile:
-                    json.dump(report_data, jsonfile, indent=2)
-        
-        return MockComplianceDashboard()
-
-
-@pytest.fixture
-def sample_user_data():
-    """Provide sample user data for testing"""
-    return {
-        "username": "testuser",
-        "password": "TestPass123!",
-        "role": "pharmacist",
-        "email": "test@example.com",
-        "full_name": "Test User"
-    }
-
-
-@pytest.fixture
-def sample_training_data():
-    """Provide sample training data for testing"""
-    return {
-        "lesson_id": "hipaa_basics_1",
-        "user_id": 1,
-        "score": 85,
-        "completed": True,
-        "time_spent": 1800  # 30 minutes in seconds
-    }
+                        {"user_id": 1, "training_completed": True True
