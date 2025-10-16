@@ -17,7 +17,7 @@ class ContentManager:
         self.checklist_items: List[Dict] = []
         
         # Ensure content directory exists
-        self.content_dir.mkdir(exist_ok=True)
+        self.content_dir.mkdir(mode=0o750, parents=True, exist_ok=True)
         
         # Load or create content
         self._load_or_create_content()
@@ -113,81 +113,4 @@ class ContentManager:
         with open(self.content_dir / "quiz_questions.json", 'w', encoding='utf-8') as f:
             json.dump(self.quiz_questions, f, indent=2)
         
-        with open(self.content_dir / "checklist_items.json", 'w', encoding='utf-8') as f:
-            json.dump(self.checklist_items, f, indent=2)
-    
-    def _validate_content(self):
-        """Validate the structure of loaded content."""
-        # Validate lessons structure
-        for lesson_title, lesson_data in self.lessons.items():
-            if not isinstance(lesson_data, dict):
-                raise ValueError(f"Lesson '{lesson_title}' must be a dictionary")
-            
-            required_lesson_keys = ["content", "key_points"]
-            for key in required_lesson_keys:
-                if key not in lesson_data:
-                    raise ValueError(f"Lesson '{lesson_title}' missing required key: {key}")
-            
-            if not isinstance(lesson_data.get("key_points", []), list):
-                raise ValueError(f"Lesson '{lesson_title}' key_points must be a list")
-        
-        # Validate quiz questions structure
-        for i, question in enumerate(self.quiz_questions):
-            if not isinstance(question, dict):
-                raise ValueError(f"Quiz question {i} must be a dictionary")
-            
-            required_quiz_keys = ["question", "options", "correct_index", "explanation"]
-            for key in required_quiz_keys:
-                if key not in question:
-                    raise ValueError(f"Quiz question {i} missing required key: {key}")
-            
-            if not isinstance(question.get("options", []), list) or len(question["options"]) < 2:
-                raise ValueError(f"Quiz question {i} must have at least 2 options")
-            
-            if not isinstance(question["correct_index"], int) or question["correct_index"] < 0:
-                raise ValueError(f"Quiz question {i} correct_index must be a non-negative integer")
-        
-        # Validate checklist items structure
-        for i, item in enumerate(self.checklist_items):
-            if not isinstance(item, dict):
-                raise ValueError(f"Checklist item {i} must be a dictionary")
-            
-            required_checklist_keys = ["text", "category"]
-            for key in required_checklist_keys:
-                if key not in item:
-                    raise ValueError(f"Checklist item {i} missing required key: {key}")
-    
-    def get_lesson(self, lesson_title: str) -> Dict:
-        """Get a specific lesson by title."""
-        return self.lessons.get(lesson_title, {})
-    
-    def get_all_lessons(self) -> List[str]:
-        """Get all available lesson titles."""
-        return list(self.lessons.keys())
-    
-    def get_quiz_question_count(self) -> int:
-        """Get the total number of quiz questions."""
-        return len(self.quiz_questions)
-    
-    def get_checklist_item_count(self) -> int:
-        """Get the total number of checklist items."""
-        return len(self.checklist_items)
-    
-    def add_lesson(self, title: str, content: str, key_points: List[str]):
-        """Add a new lesson."""
-        self.lessons[title] = {
-            "content": content,
-            "key_points": key_points,
-            "comprehension_questions": []
-        }
-        self._save_content()
-    
-    def add_quiz_question(self, question: str, options: List[str], correct_index: int, explanation: str):
-        """Add a new quiz question."""
-        self.quiz_questions.append({
-            "question": question,
-            "options": options,
-            "correct_index": correct_index,
-            "explanation": explanation
-        })
-        self._save_content()
+        with open(self.content_dir / "checklist_items.json", ' '
