@@ -144,5 +144,4 @@ bandit>=1.7.5
     print("7. Create GitHub repository and push")
     print("8. Run: python main.py")
 
-if __name__ == "__main__":
-    main()
+if __name__ == ==
