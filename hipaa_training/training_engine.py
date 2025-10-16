@@ -1,15 +1,4 @@
-"""
-Enhanced Training Engine for HIPAA Training System
--------------------------------------------------
-Handles lesson delivery, comprehension quizzes, adaptive final exams,
-and enhanced checklists for compliance validation.
-
-Now fully test-compatible:
- - Deterministic shuffling during tests (patched by pytest)
- - Handles StopIteration during mocked input
- - Works with real SQLite temp DB from pytest fixtures
-"""
-
+#hipaa_training/training_engine.py
 import os
 import random
 from rich.console import Console
