@@ -1,3 +1,4 @@
+#tests/test_security_manager.py
 """
 Comprehensive test suite for HIPAA Security Manager
 Tests all security features, edge cases, and compliance requirements
