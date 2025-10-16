@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#scripts/check_environment.py
 """
 Environment validation script
 Checks all required environment variables and dependencies
