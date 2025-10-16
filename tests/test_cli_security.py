@@ -1,3 +1,4 @@
+#tests/test_cli_security.py
 import os
 import pytest
 from unittest.mock import patch, Mock
