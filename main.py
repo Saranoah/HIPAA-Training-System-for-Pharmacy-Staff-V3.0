@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 HIPAA Training System V3.0 - Main Entry Point
 
