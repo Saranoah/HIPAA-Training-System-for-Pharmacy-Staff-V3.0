@@ -1,4 +1,4 @@
-#scripts/check_environment.py
+#!/usr/bin/env python3
 """
 Environment validation script
 Checks all required environment variables and dependencies
@@ -7,6 +7,8 @@ Checks all required environment variables and dependencies
 import os
 import sys
 from pathlib import Path
+import json
+import pkg_resources
 
 
 def check_python_version():
@@ -111,7 +113,6 @@ def check_content_files():
             continue
 
         try:
-            import json
             with open(filepath, 'r') as f:
                 json.load(f)
             print(f"✓ {filepath} valid")
