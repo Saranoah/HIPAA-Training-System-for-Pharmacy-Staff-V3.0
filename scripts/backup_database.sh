@@ -18,10 +18,6 @@ mkdir -p "$BACKUP_DIR"
 
 Backup SQLite database
 if [[ -f "$DB_PATH" ]]; then
-
-Bash
-
-Copy
 echo "📊 Backing up SQLite database..."
 
 
@@ -62,10 +58,6 @@ fi
 
 Backup content files
 if [[ -d "content" ]]; then
-
-Bash
-
-Copy
 echo "📝 Backing up content files..."
 
 tar -czf "$BACKUP_DIR/content_$TIMESTAMP.tar.gz" content/
@@ -75,10 +67,6 @@ fi
 
 Backup audit logs
 if [[ -f "logs/hipaa_audit.log" ]]; then
-
-Bash
-
-Copy
 echo "📋 Backing up audit logs..."
 
 cp logs/hipaa_audit.log "$BACKUP_DIR/hipaa_audit_$TIMESTAMP.log"
@@ -87,23 +75,6 @@ gzip "$BACKUP_DIR/hipaa_audit_$TIMESTAMP.log"
 
 echo "✅ Audit log backed up: $BACKUP_DIR/hipaa_audit_$TIMESTAMP.log.gz"
 elif [[ -f "hipaa_audit.log" ]]; then
-
-Bash
-
-Copy
-# Old location fallback
-
-cp hipaa_audit.log "$BACKUP_DIR/hipaa_audit_$TIMESTAMP.log"
-
-gzip "$BACKUP_DIR/hipaa_audit_$TIMESTAMP.log"
-fi
-
-Backup evidence files (encrypted)
-if [[ -d "evidence" ]] && [[ ! -z "$(ls -A evidence)" ]]; then
-
-Bash
-
-Copy
 echo "📁 Backing up evidence files..."
 
 tar -czf "$BACKUP_DIR/evidence_$TIMESTAMP.tar.gz" evidence/
@@ -120,10 +91,6 @@ find "$BACKUP_DIR" -name "*.log" -mtime +30 -delete 2>/dev/null || true
 
 Calculate total backup size
 if command -v du &> /dev/null; then
-
-Bash
-
-Copy
 BACKUP_SIZE=$(du -sh "$BACKUP_DIR" | cut -f1)
 
 echo "📊 Total backup size: $BACKUP_SIZE"
@@ -136,7 +103,3 @@ echo "✅ Backup completed successfully!"
 echo "📁 Backup location: $BACKUP_DIR/"
 
 echo "📅 Backup timestamp: $TIMESTAMP"
-echo "✅ Backup completed successfully!"
-echo "📁 Backup location: $BACKUP_DIR/"
-echo "📅 Backup timestamp: $TIMESTAMP"
-STAMP"
