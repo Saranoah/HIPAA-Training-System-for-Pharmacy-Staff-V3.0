@@ -1,3 +1,4 @@
+#tests/conftest.py
 """
 Pytest configuration with real database support
 """
