@@ -5,7 +5,7 @@ echo "🚀 Deploying to PythonAnywhere"
 echo "==============================="
 
 # Configuration
-PA_USERNAME="your_username"  # Change this!
+PA_USERNAME="Saranoah" 
 PA_DOMAIN="$PA_USERNAME.pythonanywhere.com"
 
 echo ""
