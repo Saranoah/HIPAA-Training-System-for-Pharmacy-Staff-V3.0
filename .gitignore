@@ -1,139 +1,52 @@
-# HIPAA Training System - Git Ignore File
-
-# =============================================================================
-# CRITICAL: Never commit sensitive data!
-# =============================================================================
-.env
-*.key
-*.pem
-*.p12
-*.pfx
-secrets/
-
-# =============================================================================
-# Python
-# =============================================================================
+# Python-specific ignores
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# =============================================================================
-# Virtual Environments
-# =============================================================================
-venv/
 env/
-ENV/
-env.bak/
-venv.bak/
-.venv/
+venv/
+.env
+*.env
 
-# =============================================================================
-# Database Files (HIPAA Sensitive!)
-# =============================================================================
-*.db
-*.sqlite
-*.sqlite3
+# Data directory (HIPAA-sensitive files)
 data/
-*.sql
-backups/
+data/*
+!data/.gitkeep
 
-# =============================================================================
-# Logs & Audit Trails (contain PHI/PII)
-# =============================================================================
-logs/
+# Development and build artifacts
+*.egg-info/
+dist/
+build/
 *.log
-hipaa_audit.log
-
-# =============================================================================
-# Evidence Files (encrypted PHI)
-# =============================================================================
-evidence/
-certificates/
-reports/*.csv
-reports/*.json
-
-# =============================================================================
-# Testing
-# =============================================================================
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.nox/
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.cache
-nosetests.xml
-test-results/
-
-# =============================================================================
-# IDEs & Editors
-# =============================================================================
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# =============================================================================
-# Jupyter Notebooks
-# =============================================================================
-.ipynb_checkpoints
-*.ipynb
-
-# =============================================================================
-# Docker
-# =============================================================================
-docker-compose.override.yml
-.dockerignore
-
-# =============================================================================
-# CI/CD
-# =============================================================================
-bandit-results.json
-.mypy_cache/
-.dmypy.json
-dmypy.json
-.ruff_cache/
-
-# =============================================================================
-# Documentation Build
-# =============================================================================
-docs/_build/
-docs/_static/
-docs/_templates/
-site/
-
-# =============================================================================
-# Temporary Files
-# =============================================================================
-tmp/
-temp/
+*.pid
 *.tmp
 *.bak
 *.swp
-*~.nib
+*.swo
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Testing artifacts
+.pytest_cache/
+coverage/
+.coverage
+*.xml
+htmlcov/
+
+# macOS-specific
+.DS_Store
+
+# PythonAnywhere-specific
+*.sqlite3
+*.db
+wsgi.py
+*.wsgi
+
+# Optional: Local development configs
+local_settings.py
+settings_local.py
