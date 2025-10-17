@@ -3,10 +3,10 @@
 CLI Package Initialization - HIPAA Training System v4.0.1
 ========================================================
 
-Production-ready initialization for the CLI package:
-- Clean exports for CLI and supporting classes
-- Zero-crash guarantee for CLI operations
-- PythonAnywhere-optimized presentation layer
+Production-ready exports for the CLI module:
+- Unified CLI implementation in cli.py
+- Clean, minimal interface for maintainability
+- PythonAnywhere-optimized with zero-crash guarantee
 """
 
 from .cli import (
@@ -15,7 +15,8 @@ from .cli import (
     LessonsCommand,
     QuizCommand,
     ChecklistCommand,
-    ProgressCommand
+    ProgressCommand,
+    main
 )
 
 __all__ = [
@@ -24,26 +25,40 @@ __all__ = [
     "LessonsCommand",
     "QuizCommand",
     "ChecklistCommand",
-    "ProgressCommand"
+    "ProgressCommand",
+    "main"
 ]
 
 __version__ = "4.0.1"
 
-# Production validation on import
+# Production validation
 if __name__ == "__main__":
     print("🧪 Validating CLI package initialization...")
     
     try:
-        from core import CONFIG
+        from core import CONFIG, PROGRESS_MANAGER, CONTENT_MANAGER, AuditLogger
         
         # Initialize CLI components
         display = DisplayManager(CONFIG)
-        cli = HIPAAComplianceCLI()
+        progress = PROGRESS_MANAGER.load_progress()
+        audit = AuditLogger(CONFIG.data_dir)
         
-        # Test basic display functionality
+        # Test all components
         display.safe_print("✅ CLI package validation test", "green")
         
+        cli = HIPAAComplianceCLI()
+        commands = [
+            LessonsCommand(display, progress, audit),
+            QuizCommand(display, progress, audit),
+            ChecklistCommand(display, progress, audit),
+            ProgressCommand(display, progress, audit)
+        ]
+        
+        # Test main entry point
+        assert callable(main), "Main function not callable"
+        
         print(f"✅ CLI package v{__version__} validated successfully")
+        print("📦 Unified CLI structure confirmed")
         
     except Exception as e:
         print(f"❌ CLI package validation failed: {e}")
