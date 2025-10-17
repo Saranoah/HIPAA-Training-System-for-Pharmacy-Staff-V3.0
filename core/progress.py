@@ -13,7 +13,7 @@ HIPAA Training Progress Module - Production Ready v3.0
 
 import json
 import os
-import tempfile  # ✅ CRITICAL: Missing import
+import tempfile  
 from datetime import datetime
 from typing import Dict, List, Any, Optional, Tuple
 from pathlib import Path
