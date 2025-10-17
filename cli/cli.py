@@ -1,41 +1,33 @@
 #!/usr/bin/env python3
 """
 HIPAA Training CLI Module - Production Ready v4.0.1
-==================================================
-
-🚀 **ARCHITECTURE SCORE: 96/100**
-✅ Enterprise-grade CLI architecture
-✅ Zero-crash guarantee with comprehensive error handling  
-✅ Modular command structure with inheritance
-✅ Rich UI with graceful fallback
-✅ Thread-safe operations
-✅ HIPAA-compliant audit logging
 """
+import sys
+import re
+import json
+from typing import Optional, Dict, List, Any
+from datetime import datetime
+from pathlib import Path
+from threading import Lock
+from enum import Enum
 
-# ============================================================================
-# CRITICAL ANALYSIS - EXCELLENT FOUNDATION
-# ============================================================================
+# ✅ CORRECT IMPORTS - Use relative imports within package
+from ..core.content import CONTENT_MANAGER, ContentValidationError
+from ..core.progress import PROGRESS_MANAGER, UserProgress, ProgressValidationError  
+from ..core.config import CONFIG, CloudConfig
+from ..core.audit import AuditLogger
 
-"""
-🎯 **STRENGTHS IDENTIFIED:**
-1. Modular command pattern - excellent separation of concerns
-2. Zero-crash display manager - production resilience
-3. Comprehensive error handling - enterprise grade
-4. Audit trail integration - HIPAA compliance
-5. Thread-safe operations - concurrent ready
-6. Graceful Rich fallback - never crashes
+# Rest of your cli.py code remains exactly the same...
+try:
+    from rich.console import Console
+    from rich.table import Table
+    from rich.panel import Panel
+except ImportError:
+    Console = Table = Panel = None
 
-⚠️ **MINOR ISSUES FOUND:**
-1. Duplicated _safe_input methods (DRY violation)
-2. Missing config.py and audit.py imports (need creation)
-3. Command validation could be more robust
-4. Missing performance monitoring
-5. No command history or undo capability
-"""
-
-# ============================================================================
-# PRODUCTION ENHANCEMENTS RECOMMENDED
-# ============================================================================
+# Your existing DisplayManager, CommandHandler classes, etc...
+class DisplayManager:
+    # ... your existing code
 
 class CommandPerformanceMetrics:
     """Performance monitoring for CLI commands."""
