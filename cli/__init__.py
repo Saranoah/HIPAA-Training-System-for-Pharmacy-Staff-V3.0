@@ -4,18 +4,19 @@ CLI Package Initialization - HIPAA Training System v4.0.1
 ========================================================
 
 Production-ready initialization for the CLI package:
-- Clean exports for interface, commands, and display modules
-- Modular command structure
+- Clean exports for CLI and supporting classes
 - Zero-crash guarantee for CLI operations
 - PythonAnywhere-optimized presentation layer
 """
 
-from .interface import HIPAAComplianceCLI
-from .display import DisplayManager
-from .commands.lessons import LessonsCommand
-from .commands.quiz import QuizCommand
-from .commands.checklist import ChecklistCommand
-from .commands.progress import ProgressCommand
+from .cli import (
+    HIPAAComplianceCLI,
+    DisplayManager,
+    LessonsCommand,
+    QuizCommand,
+    ChecklistCommand,
+    ProgressCommand
+)
 
 __all__ = [
     "HIPAAComplianceCLI",
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     print("🧪 Validating CLI package initialization...")
     
     try:
-        from core import CONFIG, PROGRESS_MANAGER
+        from core import CONFIG
         
         # Initialize CLI components
         display = DisplayManager(CONFIG)
