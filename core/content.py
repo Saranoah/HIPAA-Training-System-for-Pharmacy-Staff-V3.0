@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HIPAA Training Content Module - Production Ready v4.0.1
+HIPAA Training Content Module - Production Ready v3.0
 =======================================================
 
 🚀 **ARCHITECTURE SCORE: 95/100**
