@@ -1,4 +1,4 @@
-# 🏥 HIPAA Training System for Pharmacy Staff (V4.0)
+# 🏥 HIPAA Training System for Pharmacy Staff (V3.0)
 
 A **production-ready, enterprise-grade** training application for pharmacy staff to complete **HIPAA compliance training**, featuring modular architecture, PythonAnywhere optimization, certificate generation, and comprehensive audit logging.
 
@@ -9,7 +9,7 @@ A **production-ready, enterprise-grade** training application for pharmacy staff
 
 ---
 
-## 🚀 **WHAT'S NEW IN V4.0**
+## 🚀 **WHAT'S NEW IN V3.0**
 
 ### **Enterprise Architecture**
 - ✅ **Modular Design** - Clean separation of concerns
