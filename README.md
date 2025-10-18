@@ -399,7 +399,13 @@ While this system implements HIPAA-compliant features (audit logging, data integ
 
 ---
 
-**🚀 Your HIPAA training system is now ENTERPRISE-READY for production deployment!**
+**🚀 ## 🔗 Resources
 
-© 2024 Saranoah. All rights reserved.  
+- [HIPAA Official Website](https://www.hhs.gov/hipaa)
+- [Privacy Rule](https://www.hhs.gov/hipaa/for-professionals/privacy/)
+- [Security Rule](https://www.hhs.gov/hipaa/for-professionals/security/)
+- [Breach Notification Rule](https://www.hhs.gov/hipaa/for-professionals/breach-notification/)
+  
+
+© 2025 Saranoah. All rights reserved.  
 HIPAA Training System for Pharmacy Staff V3.0
