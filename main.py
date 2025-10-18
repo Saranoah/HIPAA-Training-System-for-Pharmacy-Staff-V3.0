@@ -16,6 +16,11 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 from enum import Enum
+import sys
+from cli.cli import main
+
+if __name__ == "__main__":
+    sys.exit(main())
 
 # ============================================================================
 # CLOUD-OPTIMIZED CONFIGURATION - FIXED: Moved to top
