@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HIPAA Training CLI Module - Production Ready v4.0.1
+HIPAA Training CLI Module - Production Ready v3.0
 ==================================================
 
 PythonAnywhere-optimized CLI for HIPAA training system:
