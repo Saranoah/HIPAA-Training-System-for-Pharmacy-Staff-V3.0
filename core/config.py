@@ -1,16 +1,4 @@
-#!/usr/bin/env python3
-"""
-HIPAA Training Configuration Module - Production Ready v4.0.1
-===========================================================
-
-Centralized configuration management for HIPAA training system:
-- Environment variable-driven settings
-- Comprehensive validation at initialization
-- Immutable configuration with defaults
-- HIPAA-compliant audit logging
-- Zero runtime failures
-"""
-
+#core/config.py
 import os
 from typing import Optional, Dict, Any
 from pathlib import Path
