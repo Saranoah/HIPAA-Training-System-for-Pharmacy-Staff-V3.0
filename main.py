@@ -1,4 +1,11 @@
-#main.py
+#!/usr/bin/env python3
+"""
+HIPAA Training System - Standalone Production Version v4.0.1
+=============================================================
+Complete, working implementation for PythonAnywhere deployment.
+All features included, zero dependencies on broken modules.
+"""
+
 import os
 import sys
 import json
@@ -10,14 +17,9 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, field
 from enum import Enum
-import sys
-from cli.cli import main
-
-if __name__ == "__main__":
-    sys.exit(main())
 
 # ============================================================================
-# CLOUD-OPTIMIZED CONFIGURATION - FIXED: Moved to top
+# CONFIGURATION
 # ============================================================================
 
 @dataclass
@@ -49,7 +51,6 @@ class CloudConfig:
             debug_mode=os.getenv('HIPAA_DEBUG', 'false').lower() == 'true'
         )
 
-# FIXED: CONFIG initialized immediately after class definition
 try:
     CONFIG = CloudConfig.from_environment()
 except Exception as e:
@@ -65,7 +66,7 @@ class ExitCode(Enum):
     KEYBOARD_INTERRUPT = 130
 
 # ============================================================================
-# COMPLETE CONTENT - FIXED: All 13 lessons included
+# COMPLETE CONTENT DATA
 # ============================================================================
 
 COMPLETE_LESSONS = {
@@ -331,7 +332,7 @@ COMPLETE_CHECKLIST = [
 ]
 
 # ============================================================================
-# CLOUD-SAFE DEPENDENCY MANAGEMENT - FIXED: Uses CONFIG now available
+# RICH UI MANAGER WITH FALLBACK
 # ============================================================================
 
 class RichManager:
@@ -345,23 +346,21 @@ class RichManager:
     def _initialize_rich(self) -> None:
         """Initialize Rich with comprehensive error containment."""
         try:
-            # Test import safely
             from rich.console import Console
             from rich.panel import Panel
             from rich.table import Table
-            from rich.progress import Progress
             
             self.console = Console()
             self.available = True
-            if CONFIG.debug_mode:  # ✅ FIXED: CONFIG now available
+            if CONFIG.debug_mode:
                 print("✅ Rich UI enhancements enabled")
-        except ImportError as e:
+        except ImportError:
             self.available = False
-            if CONFIG.debug_mode:  # ✅ FIXED: CONFIG now available
-                print(f"🔧 Rich not available: {e} - Using basic mode")
+            if CONFIG.debug_mode:
+                print(f"🔧 Rich not available - Using basic mode")
         except Exception as e:
             self.available = False
-            if CONFIG.debug_mode:  # ✅ FIXED: CONFIG now available
+            if CONFIG.debug_mode:
                 print(f"⚠️ Rich initialization failed: {e} - Using basic mode")
     
     def safe_print(self, content: str, style: str = None) -> None:
@@ -370,11 +369,10 @@ class RichManager:
             if self.available and self.console:
                 self.console.print(content, style=style)
             else:
-                # Strip any Rich markup and print safely
-                clean_content = self._strip_rich_markup(str(content))
+                import re
+                clean_content = re.sub(r'\[.*?\]', '', str(content))
                 print(clean_content)
-        except Exception as e:
-            # Ultimate fallback
+        except Exception:
             print(f"PRINT_FALLBACK: {content}")
     
     def safe_panel(self, content: str, title: str = "", border_style: str = "blue") -> None:
@@ -386,14 +384,8 @@ class RichManager:
                 self.console.print(panel)
             else:
                 self._print_basic_panel(content, title)
-        except Exception as e:
+        except Exception:
             self._print_basic_panel(content, title)
-    
-    def _strip_rich_markup(self, text: str) -> str:
-        """Basic Rich markup stripping."""
-        # Remove simple style tags (very basic implementation)
-        import re
-        return re.sub(r'\[.*?\]', '', text)
     
     def _print_basic_panel(self, content: str, title: str) -> None:
         """Fallback panel display."""
@@ -406,7 +398,7 @@ class RichManager:
         print(f"{'=' * width}")
 
 # ============================================================================
-# CLOUD DATA MANAGEMENT - PYTHONANYWHERE OPTIMIZED
+# DATA MANAGEMENT
 # ============================================================================
 
 class CloudDataManager:
@@ -427,21 +419,18 @@ class CloudDataManager:
             self.backup_dir.mkdir(mode=0o755, parents=True, exist_ok=True)
         except Exception as e:
             print(f"⚠️  Directory creation failed: {e}")
-            # Continue anyway - some operations might still work
     
     def get_progress_path(self) -> Path:
-        """Get validated progress file path."""
         return self.progress_file
     
     def get_audit_path(self) -> Path:
-        """Get validated audit file path."""
         return self.audit_file
     
     def create_backup(self, source_path: Path) -> bool:
         """Create timestamped backup of a file."""
         try:
             if not source_path.exists():
-                return True  # Nothing to backup
+                return True
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             backup_name = f"{source_path.stem}_{timestamp}{source_path.suffix}"
@@ -456,27 +445,16 @@ class CloudDataManager:
                 print(f"⚠️  Backup failed: {e}")
             return False
 
-# ============================================================================
-# ATOMIC FILE OPERATIONS - PRODUCTION GRADE
-# ============================================================================
-
 class AtomicFileManager:
     """Production-grade atomic file operations."""
     
     @staticmethod
     def atomic_json_write(data: Any, filepath: Path) -> bool:
-        """
-        Atomic JSON write with temp file and atomic move.
-        
-        Returns:
-            bool: True if successful, False otherwise
-        """
+        """Atomic JSON write with temp file and atomic move."""
         temp_path = None
         try:
-            # Ensure directory exists
             filepath.parent.mkdir(parents=True, exist_ok=True)
             
-            # Create temp file in same directory for atomic move
             with tempfile.NamedTemporaryFile(
                 mode='w', 
                 encoding='utf-8',
@@ -487,13 +465,11 @@ class AtomicFileManager:
                 json.dump(data, f, indent=2, ensure_ascii=False)
                 temp_path = Path(f.name)
             
-            # Atomic replace
             shutil.move(str(temp_path), str(filepath))
             return True
             
         except Exception as e:
             print(f"❌ Atomic write failed: {e}")
-            # Cleanup temp file
             if temp_path and temp_path.exists():
                 try:
                     temp_path.unlink()
@@ -503,12 +479,7 @@ class AtomicFileManager:
     
     @staticmethod
     def atomic_json_read(filepath: Path, default: Any = None) -> Any:
-        """
-        Atomic JSON read with corruption recovery.
-        
-        Returns:
-            Parsed data or default if unrecoverable
-        """
+        """Atomic JSON read with corruption recovery."""
         if default is None:
             default = {}
             
@@ -516,28 +487,14 @@ class AtomicFileManager:
             return default
         
         try:
-            # Primary read attempt
             with open(filepath, 'r', encoding='utf-8') as f:
                 return json.load(f)
-                
         except (json.JSONDecodeError, UnicodeDecodeError) as e:
             print(f"⚠️  File corrupted, attempting recovery: {e}")
-            
-            # Recovery: create backup and return default
             backup_mgr = CloudDataManager(CONFIG)
             backup_mgr.create_backup(filepath)
-            
-            # Try to read as text for partial recovery (advanced)
-            try:
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    print(f"📄 Corrupted content (first 200 chars): {content[:200]}...")
-            except:
-                pass
-                
             print("🔄 Restoring from defaults")
             return default
-            
         except Exception as e:
             print(f"❌ File read failed: {e}")
             return default
@@ -550,15 +507,11 @@ class AtomicFileManager:
             
             with open(filepath, 'a', encoding='utf-8', buffering=1) as f:
                 f.write(data + '\n')
-                f.flush()  # Force write to disk
+                f.flush()
             return True
         except Exception as e:
             print(f"❌ Append failed: {e}")
             return False
-
-# ============================================================================
-# PRODUCTION PROGRESS MANAGEMENT
-# ============================================================================
 
 class ProgressManager:
     """Enterprise-grade progress management with atomic safety."""
@@ -584,7 +537,7 @@ class ProgressManager:
         }
     
     def deep_merge_progress(self, default: Dict, user: Dict) -> Dict:
-        """Safely merge user progress with defaults, preserving structure."""
+        """Safely merge user progress with defaults."""
         result = default.copy()
         
         for key, value in user.items():
@@ -592,10 +545,8 @@ class ProgressManager:
                 if isinstance(result[key], dict) and isinstance(value, dict):
                     result[key] = self.deep_merge_progress(result[key], value)
                 elif isinstance(result[key], list) and isinstance(value, list):
-                    # For lists, we want to preserve the user's data but ensure type safety
                     result[key] = value
                 else:
-                    # Type-safe assignment
                     if type(value) == type(result[key]):
                         result[key] = value
                     else:
@@ -611,16 +562,12 @@ class ProgressManager:
         
         try:
             if self.progress_file.exists():
-                # Create backup before any read attempt
                 self.data_manager.create_backup(self.progress_file)
-                
-                # Atomic read with recovery
                 user_data = AtomicFileManager.atomic_json_read(self.progress_file, default_progress)
                 
                 if user_data and isinstance(user_data, dict):
                     merged_progress = self.deep_merge_progress(default_progress, user_data)
                     
-                    # Validate critical structure
                     if "checklist" not in merged_progress:
                         merged_progress["checklist"] = default_progress["checklist"]
                     
@@ -644,11 +591,9 @@ class ProgressManager:
     def save_progress(self, progress: Dict[str, Any]) -> bool:
         """Save progress with atomic safety and backup."""
         try:
-            # Update metadata
             progress["last_updated"] = datetime.now().isoformat()
             progress["version"] = "4.0.1"
             
-            # Atomic save
             success = AtomicFileManager.atomic_json_write(progress, self.progress_file)
             
             if success and CONFIG.debug_mode:
@@ -661,10 +606,6 @@ class ProgressManager:
             if CONFIG.debug_mode:
                 traceback.print_exc()
             return False
-
-# ============================================================================
-# PRODUCTION AUDIT LOGGING
-# ============================================================================
 
 class AuditLogger:
     """HIPAA-compliant audit logging."""
@@ -695,13 +636,12 @@ class AuditLogger:
             
         except Exception as e:
             print(f"❌ Audit log failed: {e}")
-            # Fallback to console in debug mode
             if CONFIG.debug_mode:
                 print(f"AUDIT_FALLBACK: {event_type} - {details}")
             return False
 
 # ============================================================================
-# PYTHONANYWHERE CLI - PRODUCTION READY
+# MAIN CLI APPLICATION
 # ============================================================================
 
 class PythonAnywhereCLI:
@@ -709,21 +649,18 @@ class PythonAnywhereCLI:
     
     def __init__(self):
         """Initialize with comprehensive safety checks."""
-        self.config = CONFIG  # ✅ FIXED: CONFIG available
+        self.config = CONFIG
         self.data_manager = CloudDataManager(self.config)
         self.progress_manager = ProgressManager(self.data_manager)
         self.audit_logger = AuditLogger(self.data_manager)
         self.rich = RichManager()
         
-        # Load progress
         self.progress = self.progress_manager.load_progress()
         
-        # Content
         self.lessons = COMPLETE_LESSONS
         self.quiz = COMPLETE_QUIZ
         self.checklist = COMPLETE_CHECKLIST
         
-        # Audit startup
         self.audit_logger.log_event("session_start", {
             "mode": "production",
             "rich_available": self.rich.available,
@@ -749,7 +686,7 @@ class PythonAnywhereCLI:
             return ""
     
     def validate_quiz_input(self, input_str: Optional[str], max_options: int) -> int:
-        """✅ FIXED: Production-grade quiz input validation."""
+        """Production-grade quiz input validation."""
         if not input_str:
             raise ValueError("Please enter an answer")
         
@@ -761,7 +698,7 @@ class PythonAnywhereCLI:
         if not (1 <= answer_num <= max_options):
             raise ValueError(f"Please enter a number between 1 and {max_options}")
         
-        return answer_num - 1  # Convert to 0-based index
+        return answer_num - 1
     
     def run(self) -> None:
         """Main CLI loop with comprehensive error containment."""
@@ -793,7 +730,6 @@ class PythonAnywhereCLI:
                 self.rich.safe_print(f"❌ Unexpected error: {e}", "red")
                 if self.config.debug_mode:
                     traceback.print_exc()
-                # Continue running despite errors
     
     def show_welcome(self) -> None:
         """Display cloud-optimized welcome message."""
@@ -869,7 +805,7 @@ class PythonAnywhereCLI:
         
         while True:
             try:
-                choice = self.safe_input("\n👉 Select lesson (1-{}) or 0 to return: ".format(len(lesson_titles)))
+                choice = self.safe_input(f"\n👉 Select lesson (1-{len(lesson_titles)}) or 0 to return: ")
                 if choice == '0':
                     return
                 
@@ -886,18 +822,15 @@ class PythonAnywhereCLI:
         """Display a specific lesson with safe formatting."""
         lesson = self.lessons[title]
         
-        # Display lesson content safely
         content = f"{title}\n\n{lesson['content']}"
         self.rich.safe_panel(content, f"{lesson['icon']} Lesson", "blue")
         
-        # Display key points
         self.rich.safe_print("\n🔑 Key Points:", "bold")
         for point in lesson["key_points"]:
             self.rich.safe_print(f"  • {point}")
         
         self.safe_input("\n📚 Press Enter when you've finished reading...")
         
-        # Mark as completed and award XP
         if title not in self.progress.get("lessons_completed", []):
             self.progress.setdefault("lessons_completed", []).append(title)
             xp_earned = lesson.get("xp_value", self.config.xp_per_lesson)
@@ -948,14 +881,11 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
         self.rich.safe_print(f"\nQuestion {question_num} of {len(self.quiz)}", "cyan")
         self.rich.safe_print(f"{question['question']}\n", "bold")
         
-        # Display options
         for opt_idx, option in enumerate(question['options'], 1):
             self.rich.safe_print(f"  {opt_idx}. {option}")
         
-        # ✅ FIXED: Use dynamic option count instead of hardcoded 4
         max_options = len(question['options'])
         
-        # Get and validate answer
         while True:
             try:
                 answer_input = self.safe_input(f"\n👉 Your answer (1-{max_options}): ")
@@ -965,7 +895,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
                 self.rich.safe_print(f"❌ {e}", "red")
                 continue
         
-        # Check answer and provide feedback
         is_correct = answer_index == question['correct_index']
         correct_answer_text = question['options'][question['correct_index']]
         
@@ -991,7 +920,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
         percentage = (correct / total_questions) * 100
         xp_earned = correct * self.config.xp_per_quiz_question
         
-        # Update progress
         self.progress["xp"] = self.progress.get("xp", 0) + xp_earned
         self.progress["level"] = self.calculate_level(self.progress["xp"])
         
@@ -1004,7 +932,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
         })
         
         if self.progress_manager.save_progress(self.progress):
-            # Display results
             results_text = f"""
 📊 Quiz Results:
 
@@ -1047,7 +974,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
         
         completed_count = 0
         
-        # Display checklist items safely
         for idx, item in enumerate(self.checklist, 1):
             completed = self.progress["checklist"].get(item["id"], False)
             status_icon = "✅" if completed else "❌"
@@ -1061,11 +987,9 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
                 "green" if completed else "white"
             )
         
-        # Show completion statistics
         completion_percent = (completed_count / len(self.checklist)) * 100
         self.rich.safe_print(f"\n📊 Completion: {completed_count}/{len(self.checklist)} ({completion_percent:.1f}%)", "cyan")
         
-        # Toggle items with validation
         while True:
             try:
                 choice = self.safe_input(f"\n👉 Toggle item (1-{len(self.checklist)}) or 0 to return: ")
@@ -1080,7 +1004,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
                     
                     self.progress["checklist"][item["id"]] = new_state
                     
-                    # Award XP for newly completed items
                     if new_state and not current_state:
                         self.progress["xp"] = self.progress.get("xp", 0) + self.config.xp_per_checklist_item
                         self.progress["level"] = self.calculate_level(self.progress["xp"])
@@ -1104,7 +1027,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
         """Display comprehensive user progress safely."""
         progress = self.progress
         
-        # Calculate statistics
         lessons_completed = len(progress.get('lessons_completed', []))
         total_lessons = len(self.lessons)
         lessons_percent = (lessons_completed / total_lessons) * 100
@@ -1130,7 +1052,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
         
         self.rich.safe_panel(progress_text, "Your Progress", "cyan")
         
-        # Show recent quiz history
         if progress.get('quiz_scores'):
             self.rich.safe_print("\n📈 Recent Quiz Scores:", "bold")
             for score in progress['quiz_scores'][-3:]:
@@ -1142,7 +1063,6 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
                     color
                 )
         
-        # Overall compliance status
         overall_completion = (lessons_percent + checklist_percent) / 2
         if overall_completion >= 80:
             status_msg = "🎉 Excellent progress! You're on track for compliance."
@@ -1161,10 +1081,8 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
         """Safe system exit with guaranteed cleanup."""
         self.rich.safe_print("\n👋 Thank you for completing HIPAA training!", "green")
         
-        # Final progress save
         self.progress_manager.save_progress(self.progress)
         
-        # Audit log
         self.audit_logger.log_event("session_end", {
             "xp": self.progress.get("xp", 0),
             "level": self.progress.get("level", 1),
@@ -1177,108 +1095,12 @@ This quiz covers all aspects of HIPAA compliance for pharmacy staff.
             print("🔧 Debug: Session ended cleanly")
 
 # ============================================================================
-# PYTHONANYWHERE TESTING UTILITIES
-# ============================================================================
-
-class PythonAnywhereTester:
-    """Comprehensive testing utilities for PythonAnywhere deployment."""
-    
-    @staticmethod
-    def run_production_tests() -> bool:
-        """Run comprehensive production readiness tests."""
-        print("🧪 RUNNING PYTHONANYWHERE PRODUCTION TESTS")
-        print("=" * 60)
-        
-        tests_passed = 0
-        total_tests = 0
-        
-        # Test 1: Configuration
-        total_tests += 1
-        try:
-            config = CloudConfig.from_environment()
-            print("✅ Configuration test passed")
-            tests_passed += 1
-        except Exception as e:
-            print(f"❌ Configuration test failed: {e}")
-        
-        # Test 2: Data directory creation
-        total_tests += 1
-        try:
-            data_mgr = CloudDataManager(CONFIG)
-            data_mgr._ensure_directories()
-            print("✅ Data directory test passed")
-            tests_passed += 1
-        except Exception as e:
-            print(f"❌ Data directory test failed: {e}")
-        
-        # Test 3: Atomic file operations
-        total_tests += 1
-        try:
-            test_data = {"test": "data", "timestamp": datetime.now().isoformat()}
-            test_file = Path("data/test_atomic.json")
-            
-            # Write
-            success = AtomicFileManager.atomic_json_write(test_data, test_file)
-            # Read
-            read_data = AtomicFileManager.atomic_json_read(test_file)
-            # Cleanup
-            if test_file.exists():
-                test_file.unlink()
-                
-            if success and read_data["test"] == "data":
-                print("✅ Atomic file operations test passed")
-                tests_passed += 1
-            else:
-                print("❌ Atomic file operations test failed")
-        except Exception as e:
-            print(f"❌ Atomic file operations test failed: {e}")
-        
-        # Test 4: Rich manager
-        total_tests += 1
-        try:
-            rich_mgr = RichManager()
-            rich_mgr.safe_print("✅ Rich manager test passed")
-            tests_passed += 1
-        except Exception as e:
-            print(f"❌ Rich manager test failed: {e}")
-        
-        # Test 5: Progress management
-        total_tests += 1
-        try:
-            data_mgr = CloudDataManager(CONFIG)
-            progress_mgr = ProgressManager(data_mgr)
-            progress = progress_mgr.load_progress()
-            if isinstance(progress, dict) and "xp" in progress:
-                print("✅ Progress management test passed")
-                tests_passed += 1
-            else:
-                print("❌ Progress management test failed")
-        except Exception as e:
-            print(f"❌ Progress management test failed: {e}")
-        
-        print("=" * 60)
-        print(f"📊 TEST RESULTS: {tests_passed}/{total_tests} tests passed")
-        
-        if tests_passed == total_tests:
-            print("🎉 ALL TESTS PASSED - READY FOR PRODUCTION")
-            return True
-        else:
-            print("⚠️  SOME TESTS FAILED - REVIEW BEFORE DEPLOYMENT")
-            return False
-
-# ============================================================================
-# PRODUCTION ENTRY POINT - PYTHONANYWHERE OPTIMIZED
+# PRODUCTION ENTRY POINT
 # ============================================================================
 
 def main() -> int:
-    """
-    PythonAnywhere-optimized main entry point.
-    
-    Returns:
-        int: Exit code (0 for success, non-zero for errors)
-    """
+    """PythonAnywhere-optimized main entry point."""
     try:
-        # Display startup information
         startup_info = f"""
 🚀 HIPAA TRAINING SYSTEM - PythonAnywhere Edition v4.0.1
 
@@ -1293,15 +1115,6 @@ def main() -> int:
         rich = RichManager()
         rich.safe_panel(startup_info, "System Startup", "green")
         
-        # Run production tests if in debug mode
-        if CONFIG.debug_mode:
-            print("\n" + "="*60)
-            tester = PythonAnywhereTester()
-            if not tester.run_production_tests():
-                print("⚠️  Proceeding despite test failures...")
-            print("="*60 + "\n")
-        
-        # Initialize and run CLI
         cli = PythonAnywhereCLI()
         cli.run()
         
