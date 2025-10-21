@@ -1,15 +1,3 @@
-#!/usr/bin/env python3
-"""
-HIPAA Training Scoring Module - Production Ready v3.0
-======================================================
-
-Production-grade scoring system for HIPAA training:
-- Deterministic XP calculations
-- Level and badge progression
-- Audit trail integration
-- Zero runtime errors
-- HIPAA-compliant progress tracking
-"""
 
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, field
