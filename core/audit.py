@@ -1,15 +1,4 @@
-#!/usr/bin/env python3
-"""
-HIPAA Training Audit Module - Production Ready v4.0.1
-====================================================
-
-HIPAA-compliant audit logging with:
-- Atomic file operations
-- Comprehensive error handling
-- Thread-safe operations
-- Zero data loss guarantee
-"""
-
+#core/audit.py
 import json
 from datetime import datetime
 from pathlib import Path
