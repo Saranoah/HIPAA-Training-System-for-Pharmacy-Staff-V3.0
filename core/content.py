@@ -1,43 +1,8 @@
-#!/usr/bin/env python3
-"""
-HIPAA Training Content Module - Production Ready v3.0
-=======================================================
-
-🚀 **ARCHITECTURE SCORE: 95/100**
-✅ Enterprise-grade content management
-✅ Zero-runtime failure guarantee  
-✅ Comprehensive validation
-✅ Audit trail & compliance ready
-"""
-
+#core/content.py
 from typing import Dict, List, Any, Tuple, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-
-# ============================================================================
-# CRITICAL ANALYSIS - EXCELLENT FOUNDATION
-# ============================================================================
-
-"""
-🎯 **STRENGTHS IDENTIFIED:**
-1. Immutable dataclasses - prevents runtime modification
-2. Import-time validation - fails fast, never corrupts
-3. Singleton pattern - memory efficient
-4. Type safety - enterprise grade
-5. Audit trail - compliance ready
-6. Atomic file operations - data integrity
-
-⚠️ **MINOR OPTIMIZATIONS NEEDED:**
-1. Thread safety incomplete (_lock not implemented)
-2. Content loading could be externalized (JSON/YAML)
-3. Missing content version migration
-4. No content backup/restore mechanism
-"""
-
-# ============================================================================
-# PRODUCTION ENHANCEMENTS RECOMMENDED
-# ============================================================================
 
 class ContentVersion(Enum):
     """Content version management for migrations."""
