@@ -1,16 +1,4 @@
-#!/usr/bin/env python3
-"""
-HIPAA Training Progress Module - Production Ready v3.0
-=======================================================
-
-🚀 **ARCHITECTURE SCORE: 97/100**
-✅ Enterprise-grade progress management
-✅ Zero data loss guarantee  
-✅ Atomic operations with corruption recovery
-✅ HIPAA-compliant audit trails
-✅ Thread-safe with comprehensive validation
-"""
-
+#core/progress.py
 import json
 import os
 import tempfile  
