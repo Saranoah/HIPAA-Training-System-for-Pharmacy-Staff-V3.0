@@ -1,21 +1,32 @@
-#!/usr/bin/env python3
-"""
-Setup Script for HIPAA Training System v4.0.1
-"""
-
-from pathlib import Path
+# setup_project.py
+import os
 import json
 
 def setup_project():
-    """Set up project directories and initial files."""
-    print("🚀 Setting up HIPAA Training System...")
+    # Create necessary directories
+    directories = [
+        'data',
+        'data/users', 
+        'data/progress',
+        'content',
+        'logs'
+    ]
     
-    # Create data directory
-    data_dir = Path("data")
-    data_dir.mkdir(exist_ok=True)
+    for dir_path in directories:
+        os.makedirs(dir_path, exist_ok=True)
+        print(f"Created directory: {dir_path}")
     
-    print("✅ Setup complete - ready for PythonAnywhere!")
-    print("💡 Run: python main.py")
+    # Create default config if needed
+    config = {
+        "admin_password": "change_this_in_production",
+        "training_required": True,
+        "compliance_threshold": 80
+    }
+    
+    with open('data/config.json', 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    print("Project setup completed!")
 
 if __name__ == "__main__":
     setup_project()
