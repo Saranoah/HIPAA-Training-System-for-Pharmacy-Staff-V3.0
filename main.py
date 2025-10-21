@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-HIPAA Training System CLI - PythonAnywhere Production Edition  
-Version: 4.0.1 - All Critical Issues Resolved
-Architecture: Zero-dependency, maximum compatibility
-"""
 
 import os
 import sys
