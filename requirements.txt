@@ -1,1 +1,9 @@
+# HIPAA Training System Dependencies
+# Minimal dependencies for PythonAnywhere deployment
+
+# Rich library for enhanced terminal UI (optional but recommended)
 rich>=13.0.0
+
+# Note: The system works WITHOUT rich - it will gracefully fall back to basic mode
+# To install: pip install -r requirements.txt
+# Or: pip install rich
