@@ -1,17 +1,4 @@
-#!/usr/bin/env python3
-"""
-HIPAA Training CLI Module - Production Ready v3.0
-==================================================
 
-PythonAnywhere-optimized CLI for HIPAA training system:
-- Zero-crash guarantee with comprehensive error handling
-- Rich UI with graceful fallback
-- Modular command structure
-- Thread-safe operations
-- HIPAA-compliant audit logging
-- Production-grade input validation
-- Certificate generation & CSV export
-"""
 
 import sys
 import re
