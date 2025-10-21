@@ -1,14 +1,3 @@
-#!/usr/bin/env python3
-"""
-Core Package Initialization - HIPAA Training System v4.0.1
-=========================================================
-
-Production-ready initialization for the core business logic package:
-- Clean exports for content, progress, scoring, config, and audit modules
-- Zero runtime dependencies
-- Clear module boundaries for HIPAA compliance
-"""
-
 from .config import ConfigManager, CloudConfig, ConfigValidationError, InvalidEnvironmentError, CONFIG_MANAGER, CONFIG
 from .content import ContentManager, Lesson, QuizQuestion, ChecklistItem, ContentValidationError, CONTENT_MANAGER
 from .progress import ProgressManager, UserProgress, ProgressValidationError, CorruptedProgressError, PROGRESS_MANAGER
