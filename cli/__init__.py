@@ -1,13 +1,3 @@
-#!/usr/bin/env python3
-"""
-CLI Package Initialization - HIPAA Training System v4.0.1
-========================================================
-
-Production-ready exports for the CLI module:
-- Unified CLI implementation in cli.py
-- Clean, minimal interface for maintainability
-- PythonAnywhere-optimized with zero-crash guarantee
-"""
 
 from .cli import (
     HIPAAComplianceCLI,
