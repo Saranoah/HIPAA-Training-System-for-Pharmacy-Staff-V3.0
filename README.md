@@ -264,10 +264,10 @@ See LICENSE.txt for full terms.
 
 ## 📞 Contact
 
-- **Developer:** Israa Ali (Saranoah)
-- **Email:** [your-email]
-- **GitHub:** [your-github]
-- **Support:** [support-email]
+- **Developer:** Israa Ali 
+- **Email:** [israaali2019@yahoo.com]
+- **GitHub:** [https://github.com/Saranoah/HIPAA-Training-System-for-Pharmacy-Staff-V3.0]
+- **Support:** [israaali2019@yahoo.com]
 
 ---
 
