@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HIPAA Training System - Standalone Production Version v4.0.1
+HIPAA Training System - Standalone Production Version v3.0
 =============================================================
 Complete, working implementation for PythonAnywhere deployment.
 All features included, zero dependencies on broken modules.
