@@ -1,52 +1,72 @@
-# Python-specific ignores
-__pycache__/
+# PROTECT YOUR CODE
+main.py
+hipaa_training.py
+app.py
 *.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.env
-*.env
+__pycache__/
 
-# Data directory (HIPAA-sensitive files)
+# Protect user data
 data/
-data/*
-!data/.gitkeep
+*.db
+*.json
+*.jsonl
+*.csv
+backups/
 
-# Development and build artifacts
-*.egg-info/
-dist/
-build/
-*.log
-*.pid
-*.tmp
-*.bak
-*.swp
-*.swo
+# Protect sensitive config
+.env
+config.ini
+secrets.txt
 
-# IDE and editor files
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
 .vscode/
 .idea/
-*.sublime-project
-*.sublime-workspace
+*.swp
+*.swo
+```
 
-# Testing artifacts
-.pytest_cache/
-coverage/
-.coverage
-*.xml
-htmlcov/
+---
 
-# macOS-specific
-.DS_Store
+## 📄 **Step 2: Create Commercial LICENSE**
 
-# PythonAnywhere-specific
-*.sqlite3
-*.db
-wsgi.py
-*.wsgi
+Create `LICENSE` file:
+```
+HIPAA Training System - Commercial License
+==========================================
 
-# Optional: Local development configs
-local_settings.py
-settings_local.py
+Copyright (c) 2025 Israa Ali (Saranoah)
+
+NOTICE: This software is NOT open source.
+
+EVALUATION ONLY
+This repository contains documentation and examples for evaluation purposes only.
+The actual source code is NOT included in this repository.
+
+COMMERCIAL USE
+To use this software commercially, you must purchase a license from:
+- Gumroad: https://your-gumroad-link
+- Contact: your-email@example.com
+
+LICENSED USE INCLUDES:
+✓ Full source code (main.py)
+✓ Commercial deployment rights
+✓ Modification rights
+✓ Integration into your products
+✓ White-label options (Agency+ tiers)
+
+RESTRICTIONS:
+✗ No unauthorized distribution
+✗ No reverse engineering of licensed code
+✗ No resale without white-label license
+✗ No public posting of source code
+
+For licensing inquiries, contact: your-email@example.com
+
+DISCLAIMER:
+This software is provided "as is" without warranty of any kind.
+It is intended for educational purposes and does not constitute 
+legal advice or HIPAA certification.
